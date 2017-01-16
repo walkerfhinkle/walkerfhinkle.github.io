@@ -1,0 +1,107 @@
+
+/*Head banner*/
+header {
+	font-size: 80px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	font-family: 'Roboto', sans-serif;
+	color: #c2c2c2;
+}
+
+/*FRIENDS section*/
+body {
+	font-family: 'Lato', sans-serif;
+	color: #c2c2c2;
+	background-image: url(img/grayback.jpg);
+}
+.quote1 {
+	text-align: center;
+	padding-top: 10px;
+	margin: 1px;
+}
+.s1 {
+	text-align: center;
+	padding-bottom: 10px;
+}
+a.f1:link {
+	text-decoration: none;
+	color: white;
+}
+a.f1:visited {
+	color: white;
+}
+a.f1:hover {
+	color: white;
+}
+a.hlinks:link {
+	padding-right: 7px;
+	padding-left: 3px;
+	font-size: 20px;
+	color: #c2c2c2;
+	text-decoration: none;
+}
+a.hlinks:visited {
+	color: #c2c2c2;
+}
+a.hlinks:hover {
+	font-size: 20px;
+	color: white;
+}
+#search {
+	padding-left: 10px;
+}
+
+/*Image and advertising section*/
+.btext {
+	font-family: 'Raleway', sans-serif;
+	color: #c2c2c2;
+}
+.list1 {
+	padding-top: 10px;
+	list-style-type: none;
+	text-align: center;
+	color: white;
+}
+.list1 li {
+	display: inline;
+	margin: 0px 230px 0px 170px;
+}
+#container1 {
+	position: relative;
+	display: table;
+	text-align: justify;
+	padding-top: 10px;
+	padding-bottom: 20%;
+	padding-left: 17.48%;
+	height: 80%;
+	width: 75%;
+}
+#s2 {
+  	height: 500px;
+  	width: 320px;
+  	margin: 0px 132px 0px 0px;
+}
+
+/*Footer*/
+footer {
+
+}
+a.flinks:link {
+	padding-right: 7px;
+	padding-left: 3px;
+	padding-top: 8px;
+	font-size: 15px;
+	color: #c2c2c2;
+	text-decoration: none;
+}
+a.flinks:visited {
+	color: #c2c2c2;
+}
+a.flinks:hover {
+	font-size: 15px;
+	color: white;
+}
+.list2 {
+	padding-left: 17.3%;
+	list-style-type: none;
+}
