@@ -51,47 +51,46 @@ a.headli:hover {
 	padding-left: 10px;
 }
 
-/*Image and advertising section*/
-.bodtxt {
-	font-family: 'Raleway', sans-serif;
-	color: #c2c2c2;
-}
-.list1 {
-	padding-top: 10px;
-	list-style-type: none;
-	text-align: center;
-	color: white;
-}
-.list1 li {
-	display: inline;
-	margin: 0px 230px 0px 170px;
-}
+/*About us*/
 #cont1 {
-	position: relative;
-	display: table;
-	text-align: justify;
-	padding-top: 10px;
-	padding-bottom: 20px;
-	padding-left: 17.48%;
-	height: 80%;
-	width: 75%;
-}
-#p1 {
-  	height: 500px;
-  	width: 320px;
-  	margin: 0px 132px 30px 0px;
-}
-#cont2 {
 	position: relative;
 	display: block;
 	text-align: center;
 	margin: auto;
 }
-#p2 {
+.ban1 {
 	text-align: center;
-	height: 65.1%;
+	height: 100px;
 	width: 65.1%;
-	margin: 20px 0px 0px 0px;
+	margin: 10px 0px 0px 0px;
+}
+#cont2 {
+	width: 65%;
+	text-align: justify;
+	margin: 0px 0px 0px 17.4%;
+	word-spacing: 5px;
+}
+.bodtxt {
+	font-family: 'Raleway', sans-serif;
+	color: #c2c2c2;
+	text-align: center;
+	margin: 10px 0px 30px 0px;
+	font-size: 22px;
+}
+.paratxt {
+	font-size: 18px;
+}
+a.parali:link {
+	font-size: 20px;
+	color: #f49d6e;
+	text-decoration: none;
+}
+a.parali:visited {
+	color: #f49d6e;
+}
+a.parali:hover {
+	font-size: 20px;
+	color: white;
 }
 
 /*Footer*/
