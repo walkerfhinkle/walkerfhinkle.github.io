@@ -19,6 +19,9 @@ body {
 	padding-top: 10px;
 	margin: 1px;
 }
+#sec1 {
+	padding-bottom: 10px;
+}
 .sec1 {
 	text-align: center;
 	padding-bottom: 10px;
