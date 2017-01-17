@@ -1,0 +1,60 @@
+/****************************/
+/*Contact Form              */
+/****************************/
+
+.formcont {
+	text-align: center;
+	margin: 0 auto;
+	width: 315px;
+}
+div#contact {
+	font-family: 'Raleway', sans-serif;
+	color: #c2c2c2;
+	position: relative;
+	margin: 0 auto;
+}
+div#form {
+	width: 300px;
+	padding: 0 50px 15px 0px;
+	margin-top: 20px;
+}
+hr {
+	margin-top: -5px
+}
+label {
+	float:left;
+	font-size: 18px
+}
+input[type="text"] {
+	width: 100%;
+	margin-top: 10px;
+	height: 15px;
+	margin-bottom: 25px;
+	padding: 10px;
+	color: #202022;
+	background-color: #c2c2c2;
+	border: none;
+	font-size: 18px;
+}
+textarea {
+	width: 250%;
+	padding: 10px;
+	margin-bottom: 25px;
+	margin-top: 10px;
+	height: 100px;
+	resize: none;
+	border: none;
+	background-color: #c2c2c2;
+	resize: none;
+	font-size: 18px;
+}
+input[type="submit"] {
+	width: 100%;
+	padding: 10px 45px;
+	background-color: white;
+	border: none;
+	color: #202022;
+	font-size: 18px;
+	font-weight: 700;
+	cursor:pointer;
+}

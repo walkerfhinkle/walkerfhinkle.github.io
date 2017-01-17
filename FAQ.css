@@ -1,0 +1,127 @@
+
+/****************************/
+/*Head Banner               */
+/****************************/
+header {
+	font-size: 80px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	font-family: 'Roboto', sans-serif;
+	color: #c2c2c2;
+}
+
+/****************************/
+/*FRIENDS Section           */
+/****************************/
+body {
+	font-family: 'Lato', sans-serif;
+	color: #c2c2c2;
+	background-color: #202022;
+}
+.quote1 {
+	text-align: center;
+	padding-top: 10px;
+	margin: 1px;
+}
+.sec1 {
+	text-align: center;
+	padding-bottom: 10px;
+}
+a.fri1:link {
+	text-decoration: none;
+	color: white;
+}
+a.fri1:visited {
+	color: white;
+}
+a.fri1:hover {
+	color: white;
+}
+a.headli:link {
+	padding-right: 7px;
+	padding-left: 3px;
+	font-size: 20px;
+	color: #c2c2c2;
+	text-decoration: none;
+}
+a.headli:visited {
+	color: #c2c2c2;
+}
+a.headli:hover {
+	font-size: 20px;
+	color: white;
+}
+#search {
+	padding-left: 10px;
+}
+
+/****************************/
+/*About us                  */
+/****************************/
+#cont1 {
+	position: relative;
+	display: block;
+	text-align: center;
+	margin: auto;
+}
+.ban1 {
+	text-align: center;
+	height: 100px;
+	width: 65.1%;
+	margin: 10px 0px 0px 0px;
+}
+#cont2 {
+	width: 65%;
+	text-align: justify;
+	margin: 0px 0px 0px 17.4%;
+	word-spacing: 5px;
+}
+.bodtxt {
+	font-family: 'Raleway', sans-serif;
+	color: #c2c2c2;
+	text-align: center;
+	margin: 10px 0px 30px 0px;
+	font-size: 22px;
+}
+.paratxt {
+	font-size: 18px;
+}
+a.parali:link {
+	font-size: 20px;
+	color: #f49d6e;
+	text-decoration: none;
+}
+a.parali:visited {
+	color: #f49d6e;
+}
+a.parali:hover {
+	font-size: 20px;
+	color: white;
+}
+
+
+/****************************/
+/*Footer                    */
+/****************************/
+footer {
+
+}
+a.footli:link {
+	padding-right: 7px;
+	padding-left: 3px;
+	padding-top: 8px;
+	font-size: 15px;
+	color: #c2c2c2;
+	text-decoration: none;
+}
+a.footli:visited {
+	color: #c2c2c2;
+}
+a.footli:hover {
+	font-size: 15px;
+	color: white;
+}
+.list2 {
+	padding-left: 17.3%;
+	list-style-type: none;
+}
