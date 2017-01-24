@@ -10,6 +10,7 @@ var heroTemplate = "" +
 	"<p><strong>Name:</strong> {{name}}</p>" +
 	"<p><strong>Ability:</strong> {{ability}}</p>" +
 	"<p><strong>City:</strong> {{city}}</p>" +
+	"<button id='{{id}}' class='remove'>X</button>" +
 	"</li>";
 	//DRY - Don't Repeat Yourself
 
@@ -29,7 +30,7 @@ $(document).ready(function() {
 
 		success: function(heroes){
 			$.each(heroes, function(i, hero){
-				addHero(hero)
+				addHeroes(hero)
 			});
 		},
 
@@ -59,7 +60,7 @@ $(document).ready(function() {
 			data: hero,
 
 				success: function(newHero){
-					addHero(newHero);
+					addHeroes(newHero);
 				},
 
 				error: function(){

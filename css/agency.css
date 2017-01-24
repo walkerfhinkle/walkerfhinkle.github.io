@@ -422,7 +422,7 @@ section h3.section-subheading {
   height: 80px;
   position: absolute;
   z-index: 100;
-  background-color: #fed136;
+  background-color: #EA706E;
   color: white;
   border-radius: 100%;
   border: 7px solid #f1f1f1;
@@ -529,7 +529,7 @@ section h3.section-subheading {
     margin-left: -85px;
   }
   .timeline > li .timeline-image h4 {
-    margin-top: 40px;
+    margin-top: 20px;
   }
   .timeline > li.timeline-inverted > .timeline-panel {
     padding: 0 100px 20px 20px;
