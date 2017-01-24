@@ -3,12 +3,12 @@
 $(function() {
 
     $("#contactForm input,#contactForm textarea").jqBootstrapValidation({
-        preventSubmit: false,
+        preventSubmit: true,
         submitError: function($form, event, errors) {
             // additional error messages or events
         },
         submitSuccess: function($form, event) {
-            event; // prevent default submit behaviour
+            event.preventDefault(); // prevent default submit behaviour
             // get values from FORM
             var name = $("input#name").val();
             var email = $("input#email").val();
