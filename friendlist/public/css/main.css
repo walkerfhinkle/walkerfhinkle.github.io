@@ -1,0 +1,17 @@
+body {
+	font-family: 'Lato', sans-serif;
+}
+.h3-header {
+	text-align: center;
+	font-family: 'Indie Flower', cursive;
+	font-size: 40px;
+
+}
+
+.container {
+	background-color: lightgray;
+}
+.h3-body {
+	text-align: center;
+	font-family: 'Lato', sans-serif;
+}

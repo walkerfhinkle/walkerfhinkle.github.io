@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>My Hero</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="public/css/main.css">
+
+	<!--Fonts-->
+	<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+
+
+
+	<!--CDN for CSS and JS-->
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+</head>
+
+<body>
+	<div class="container" style="margin: 15px 0px 0px 20%;">
+
+		<!--POST Friends-->
+		<h3 class="h3-header">Add a Hero</h3>
+
+		<!--Name-->
+		<div class="form-group row">
+			<label class="col-2" col-form-label" style="margin: 0px 0px 0px 26%;">Name: </label>
+				<div class="col-10" style="width: 50%; margin: 0px 0px 0px 25%;">
+					<input class="form-control" type="text" id="name">
+				</div>
+		</div>
+		<!--Occupation-->
+		<div class="form-group row">
+			<label class="col-2" col-form-label" style="margin: 0px 0px 0px 26%;">Ability: </label>
+				<div class="col-10" style="width: 50%; margin: 0px 0px 0px 25%;">
+					<input class="form-control" type="text" id="ability">
+				</div>
+		</div>
+		<!--Age-->
+		<div class="form-group row">
+			<label class="col-2" col-form-label" style="margin: 0px 0px 0px 26%;">City: </label>
+				<div class="col-10" style="width: 50%; margin: 0px 0px 0px 25%;">
+					<input class="form-control" type="text" id="city">
+				</div>
+		</div>
+			<button type="button" class="btn btn-success" id="add-hero" style="margin: 0px 0px 0px 24.5%;">Add</button>
+			<p><br /></p>
+	</div>
+
+<div>
+	<!--GET Friends-->
+			<h3 class="h3-body">Heroes</h3>
+				<ul id="heroes">
+					
+
+
+				</ul>
+
+</div>
+
+	<script type="text/javascript" src="js/main.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
+</body>
+
+</html>
