@@ -743,5 +743,5 @@ img::-moz-selection {
   background: transparent;
 }
 body {
-  webkit-tap-highlight-color: #ea4e4a;
+  webkit-tap-highlight-color: lightgray;
 }
