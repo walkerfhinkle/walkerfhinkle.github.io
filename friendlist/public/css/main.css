@@ -1,17 +1,49 @@
-body {
-	font-family: 'Lato', sans-serif;
-}
+
 .h3-header {
 	text-align: center;
 	font-family: 'Indie Flower', cursive;
 	font-size: 40px;
+	color: white;
 
 }
-
+label {
+	color: lightgray;
+	opacity: 1;
+}
 .container {
+	background-color: #333333;
+	border-radius: 10px;
+	opacity: 0.9;
+}
+
+body {
+	background-image: fill;
+	background-color: powderblue;
+}
+
+.hero-container {
 	background-color: lightgray;
+	border-radius: 10px;
+	max-width: 61%;
+	opacity: 0.9;
+	margin: 15px 0px 10px 20%;
 }
 .h3-body {
+	padding-top: 10px;
 	text-align: center;
-	font-family: 'Lato', sans-serif;
+	font-family: 'Indie Flower', cursive;
+	font-size: 40px;
+	word-wrap: break-word;
+}
+#heroes {
+	
+}
+li {
+	margin: 10px 15px 10px 75px;
+	word-wrap: break-word;
+}
+button {
+	background-color: #f43d3a;
+	border: none;
+	border-radius: 5px;
 }

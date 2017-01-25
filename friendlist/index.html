@@ -4,7 +4,7 @@
 <head>
 	<title>My Hero</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="public/css/main.css">
 
 	<!--Fonts-->
 	<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
@@ -18,7 +18,7 @@
 	
 </head>
 
-<body>
+<body style="background-image: url(public/img/background.jpg)";>
 	<div class="container" style="margin: 15px 0px 0px 20%;">
 
 		<!--POST Friends-->
@@ -49,18 +49,19 @@
 			<p><br /></p>
 	</div>
 
-<div>
+	<div>
 	<!--GET Friends-->
-			<h3 class="h3-body">Heroes</h3>
-				<ul id="heroes">
+		<div class="hero-container">
+			<h3 class="h3-body"><strong>Heroes</strong></h3>
+				<ul id="heroes" style="display: inline-flex;">
 					
 
 
 				</ul>
+		</div>
+	</div>
 
-</div>
-
-	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="public/js/main.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
 </body>
 
