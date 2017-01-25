@@ -17,8 +17,8 @@ label {
 }
 
 body {
+	background-image: url(../img/background.jpg);
 	background-image: fill;
-	background-color: powderblue;
 }
 
 .hero-container {
