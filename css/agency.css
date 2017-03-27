@@ -730,11 +730,11 @@ ul.social-buttons li a:active {
 }
 ::-moz-selection {
   text-shadow: none;
-  background: #ea4e4a;
+  background: #c2f3fc;
 }
 ::selection {
   text-shadow: none;
-  background: #ea4e4a;
+  background: #c2f3fc;
 }
 img::selection {
   background: transparent;
