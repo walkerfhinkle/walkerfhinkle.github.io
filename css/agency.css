@@ -96,8 +96,43 @@ fieldset[disabled] .btn-primary.active {
   border-color: #fed136;
 }
 .btn-primary .badge {
-  color: #fed136;
+  color: white;
   background-color: white;
+}
+.btn-1-text{
+  color:  white;
+}
+.btn-1-text:hover,
+.btn-1-text:active,
+.btn-1-text:focus,
+.open .dropdown-toggle.btn-l {
+  color:  white;
+  text-decoration:  none;
+}
+.btn-l {
+  color: white;
+  background-color: #ea4e4a;
+  border-color: #ea4e4a;
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-radius: 3px;
+  font-size: 15px;
+  padding: 10px 15px;
+}
+.btn-l:hover,
+.btn-l:focus,
+.btn-l:active,
+.btn-l.active,
+.open .dropdown-toggle.btn-l {
+  color: white;
+  background-color: #EA706E;
+  border-color: #EA706E;
+}
+.btn-l:active,
+.btn-l.active,
+.open .dropdown-toggle.btn-l {
+  background-image: none;
 }
 .btn-xl {
   color: #ea4e4a;

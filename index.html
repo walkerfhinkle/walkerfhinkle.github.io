@@ -26,7 +26,7 @@
     <link href="favicon.ico" rel="icon" type="image/x-icon" />
 
     <!-- Theme CSS -->
-    <link href="css/agency.min.css" rel="stylesheet">
+    <link href="css/agency.css" rel="stylesheet">
     <link href="./css/main.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -83,6 +83,11 @@
                 <div class="intro-heading">Walker Hinkle</div>
                 <div class="intro-lead-in">To My World</div>
 
+                    <!-- Resume -->
+                    <div class="col-lg-12 text-center">
+                        <div id="success"></div>
+                            <button type="submit" class="btn btn-l"><a class="btn-1-text" href="https://docs.google.com/document/d/1IgbtIyRqryoAW30vxqCbkg3YxKXRxB2OAr1Blkd-W14/" target="_blank">Resume</a></button>
+                    </div>
             </div>
         </div>
     </header>
@@ -136,19 +141,19 @@
             </div>
             <div class="row">
                 <div class="col-md-4 col-sm-6 portfolio-item">
-                    <a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-                        <div class="portfolio-hover">
-                            <div class="portfolio-hover-content">
-                                <i class="fa fa-plus fa-3x"></i>
+                        <a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+                            <div class="portfolio-hover">
+                                <div class="portfolio-hover-content">
+                                    <i class="fa fa-plus fa-3x"></i>
+                                </div>
                             </div>
+                            <img src="img/portfolio/workout.png" class="img-responsive" alt="">
+                        </a>
+                        <div class="portfolio-caption">
+                            <h4>Workout Log</h4>
+                            <p class="text-muted">Angular</p>
                         </div>
-                        <img src="img/portfolio/roundicons.png" class="img-responsive" alt="">
-                    </a>
-                    <div class="portfolio-caption">
-                        <h4>Hero List</h4>
-                        <p class="text-muted">Form: Using an API</p>
                     </div>
-                </div>
                 <div class="col-md-4 col-sm-6 portfolio-item">
                     <a href="#portfolioModal2" class="portfolio-link" data-toggle="modal">
                         <div class="portfolio-hover">
@@ -198,20 +203,6 @@
                                 <i class="fa fa-plus fa-3x"></i>
                             </div>
                         </div>
-                        <img src="img/portfolio/escape.png" class="img-responsive" alt="">
-                    </a>
-                    <div class="portfolio-caption">
-                        <h4>Resume</h4>
-                        <p class="text-muted">What To Know</p>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-6 portfolio-item">
-                    <a href="#portfolioModal6" class="portfolio-link" data-toggle="modal">
-                        <div class="portfolio-hover">
-                            <div class="portfolio-hover-content">
-                                <i class="fa fa-plus fa-3x"></i>
-                            </div>
-                        </div>
                         <img src="img/portfolio/dreams.png" class="img-responsive" alt="">
                     </a>
                     <div class="portfolio-caption">
@@ -220,7 +211,7 @@
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 portfolio-item">
-                    <a href="#portfolioModal7" class="portfolio-link" data-toggle="modal">
+                    <a href="#portfolioModal6" class="portfolio-link" data-toggle="modal">
                         <div class="portfolio-hover">
                             <div class="portfolio-hover-content">
                                 <i class="fa fa-plus fa-3x"></i>
@@ -233,7 +224,8 @@
                         <p class="text-muted">Mean JS</p>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-6 portfolio-item">
+                <!-- Modal 8 (TEST) -->
+                <!-- <div class="col-md-4 col-sm-6 portfolio-item">
                     <a href="#portfolioModal8" class="portfolio-link" data-toggle="modal">
                         <div class="portfolio-hover">
                             <div class="portfolio-hover-content">
@@ -246,21 +238,8 @@
                         <h4>Bucket List</h4>
                         <p class="text-muted">Redux + React</p>
                     </div>
-                </div>
-                <div class="col-md-4 col-sm-6 portfolio-item">
-                    <a href="#portfolioModal9" class="portfolio-link" data-toggle="modal">
-                        <div class="portfolio-hover">
-                            <div class="portfolio-hover-content">
-                                <i class="fa fa-plus fa-3x"></i>
-                            </div>
-                        </div>
-                        <img src="img/portfolio/workout.png" class="img-responsive" alt="">
-                    </a>
-                    <div class="portfolio-caption">
-                        <h4>Workout Log</h4>
-                        <p class="text-muted">Angular</p>
-                    </div>
-                </div>
+                </div> -->
+                
             </div>
         </div>
     </section>
@@ -455,7 +434,7 @@
     <!-- Portfolio Modals -->
     <!-- Use the modals below to showcase details about your portfolio projects! -->
 
-    <!-- Portfolio Modal 1 -->
+   <!-- Portfolio Modal 1 -->
     <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -469,13 +448,12 @@
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="modal-body">
-                                <!-- Project Details Go Here -->
-                                <h2>Hero List</h2>
-                                <p class="item-intro text-muted">A friendly API.</p>
-                                <img class="img-responsive img-centered" src="img/portfolio/roundicons-free.png" alt="">
-                                <p>The <a href="https://heroapp-demo.herokuapp.com/" target="_blank"><b>Hero List</b></a> was an in-class project originally designed as a friend list. It was created and then manipulated to help me better understand form creation and the purpose of an API.
-                                It may be a little rough, but connecting a form with data to an API hosted by a third party was a huge leap in my education. This was just one more step in furthing my knowledge of Javascript, CSS, HTML and APIs.</p>
-                                <p>Click <a href="https://heroapp-demo.herokuapp.com/" target="_blank">here</a> for a preview of the Hero List.</p>
+                                <!-- Project Details -->
+                                <h2>Workout Log</h2>
+                                <p class="item-intro text-muted">Blood, Sweat and Tears.</p>
+                                <img class="img-responsive img-centered" src="img/portfolio/workout-preview.PNG" alt="">
+                                <p>The <a href="https://workoutking.herokuapp.com/" target="_blank"><b>Workout Log</b></a> is a simple application designed to record workout sessions whether they be specific routines or a light jog/activity. The Workout Log was created using Angular as well as an API to store user data. Angular and HTML alone are a nice change of pace when compared to MEAN or MERN. I would like to go back and change the application to work towards my personal needs while at the same time increasing my knowledge of Angular.</p>
+                                <p>Click <a href="https://workoutking.herokuapp.com/" target="_blank">here</a> for a preview of the Workout Log.</p>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                             </div>
                         </div>
@@ -571,37 +549,10 @@
         </div>
     </div>
 
+    
+
     <!-- Portfolio Modal 5 -->
     <div class="portfolio-modal modal fade" id="portfolioModal5" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="close-modal" data-dismiss="modal">
-                    <div class="lr">
-                        <div class="rl">
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-8 col-lg-offset-2">
-                            <div class="modal-body">
-                                <!-- Project Details Go Here -->
-                                <h2>Resume</h2>
-                                <p class="item-intro text-muted">The experiments that became achievements.</p>
-                                <img class="img-responsive img-centered" src="img/portfolio/escape-preview.png" alt="">
-                                <p>Above is a sample of my <a href="https://docs.google.com/document/d/1IgbtIyRqryoAW30vxqCbkg3YxKXRxB2OAr1Blkd-W14/" target="_blank">resume</a>. A more detailed synopsis of my career and life choices can be a major benefit to any business. They can discover for themselves exactly who they are planning to aquire. I believe I am a very adaptable individual and now coder who is not afraid to challenge himself and reach for higher goals.</p>
-                                <p>Explore to your hearts content!<a href="https://docs.google.com/document/d/1IgbtIyRqryoAW30vxqCbkg3YxKXRxB2OAr1Blkd-W14/" target="_blank"><i class="fa fa-file-word-o fa-2x" style="padding-left: 10px;"></i></a></p>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Portfolio Modal 6 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="close-modal" data-dismiss="modal">
@@ -629,8 +580,8 @@
         </div>
     </div>
 
-    <!-- Portfolio Modal 7 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal7" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Portfolio Modal 6 (TEST) -->
+    <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="close-modal" data-dismiss="modal">
@@ -643,7 +594,7 @@
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="modal-body">
-                                <!-- Project Details Go Here -->
+                                
                                 <h2>FlowerUs</h2>
                                 <p class="item-intro text-muted">The little shop of flowers.</p>
                                 <img class="img-responsive img-centered" src="img/portfolio/flowerus-preview.PNG" alt="">
@@ -658,8 +609,8 @@
         </div>
     </div>
 
-    <!-- Portfolio Modal 8 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal8" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Portfolio Modal 7 (TEST) -->
+    <!-- <div class="portfolio-modal modal fade" id="portfolioModal7" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="close-modal" data-dismiss="modal">
@@ -672,7 +623,7 @@
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="modal-body">
-                                <!-- Project Details Go Here -->
+                                
                                 <h2>Bucket List</h2>
                                 <p class="item-intro text-muted">Learning to React with Redux.</p>
                                 <img class="img-responsive img-centered" src="img/portfolio/bucket-preview.PNG" alt="">
@@ -685,36 +636,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <!-- Portfolio Modal 9 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal9" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="close-modal" data-dismiss="modal">
-                    <div class="lr">
-                        <div class="rl">
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-8 col-lg-offset-2">
-                            <div class="modal-body">
-                                <!-- Project Details -->
-                                <h2>Workout Log</h2>
-                                <p class="item-intro text-muted">Blood, Sweat and Tears.</p>
-                                <img class="img-responsive img-centered" src="img/portfolio/workout-preview.PNG" alt="">
-                                <p>The <a href="https://workoutking.herokuapp.com/" target="_blank"><b>Workout Log</b></a> is a simple application designed to record workout sessions whether they be specific routines or a light jog/activity. The Workout Log was created using Angular as well as an API to store user data. Angular and HTML alone are a nice change of pace when compared to MEAN or MERN. I would like to go back and change the application to work towards my personal needs while at the same time increasing my knowledge of Angular.</p>
-                                <p>Click <a href="https://workoutking.herokuapp.com/" target="_blank">here</a> for a preview of the Workout Log.</p>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>
