@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Reel Roulette Sample</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@400;600&display=swap" />
+<style>
+	:root {
+		color-scheme: dark;
+		--bg: #1f2125;
+		--panel: #2a2d32;
+		--line: #3a3e45;
+		--ink: #f2f0ea;
+		--ink-soft: #a9a8a3;
+		--gold: #e5a00d;
+		--display: "Bebas Neue", "Oswald", Impact, sans-serif;
+		--body: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+	}
+	* { box-sizing: border-box; }
+	html, body { margin: 0; }
+	body {
+		background: var(--bg); color: var(--ink); font-family: var(--body);
+		min-height: 100vh;
+		padding: max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 32px max(16px, env(safe-area-inset-left, 0px));
+		display: flex; justify-content: center;
+	}
+	main { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 18px; }
+	header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+	h1 { font-family: var(--display); font-weight: 400; font-size: 2.6rem; letter-spacing: 0.04em; margin: 0; line-height: 1; }
+	h1 span { color: var(--gold); }
+	.badge { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px; white-space: nowrap; }
+	.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--panel); border-radius: 10px; padding: 4px; gap: 4px; }
+	.seg button { font: 600 0.85rem var(--body); color: var(--ink-soft); background: transparent; border: 0; border-radius: 7px; padding: 9px 0; cursor: pointer; }
+	.seg button[aria-pressed="true"] { background: var(--gold); color: #1f2125; }
+	.wheel-wrap { position: relative; width: 100%; max-width: 100%; aspect-ratio: 1; }
+	canvas { width: 100%; height: 100%; display: block; }
+	.pointer { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 26px solid var(--gold); filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+	.spin {
+		font-family: var(--display); font-size: 1.7rem; letter-spacing: 0.08em;
+		background: var(--gold); color: #1f2125; border: 0; border-radius: 12px; padding: 12px; cursor: pointer;
+	}
+	.spin:disabled { opacity: 0.55; cursor: default; }
+	button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+	.result { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; min-height: 92px; }
+	.result small { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+	.result h2 { font-family: var(--display); font-weight: 400; font-size: 2rem; letter-spacing: 0.03em; margin: 4px 0 2px; color: var(--gold); line-height: 1.05; }
+	.result p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
+	.note { font-size: 0.8rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+	.note a { color: var(--gold); }
+	@media (prefers-reduced-motion: reduce) { .spin { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+	<header>
+		<h1>Reel <span>Roulette</span></h1>
+		<span class="badge">Sample</span>
+	</header>
+
+	<div class="seg" role="group" aria-label="What to spin">
+		<button type="button" id="f-all" data-f="all" aria-pressed="true">Everything</button>
+		<button type="button" id="f-movie" data-f="movie" aria-pressed="false">Movies</button>
+		<button type="button" id="f-tv" data-f="tv" aria-pressed="false">TV</button>
+	</div>
+
+	<div class="wheel-wrap">
+		<canvas id="wheel" width="880" height="880" aria-label="Spinning wheel of titles"></canvas>
+		<div class="pointer" aria-hidden="true"></div>
+	</div>
+
+	<button type="button" class="spin" id="spin">Spin</button>
+
+	<section class="result" aria-live="polite" id="result">
+		<small>Tonight's pick</small>
+		<h2 id="r-title">Give it a spin</h2>
+		<p id="r-meta">Pick a filter and spin the wheel.</p>
+	</section>
+
+	<p class="note">This is a public demo with a sample list. The full app runs on my home server, pulls the library and posters from Plex, filters by genre and watchlist, and has two-player challenge games. <a href="../../index.html#projects">Back to Walker's site</a></p>
+</main>
+
+<script>
+(function () {
+	var LIB = [
+		{ t: "The Princess Bride", k: "movie", m: "1987 · Adventure" },
+		{ t: "Spirited Away", k: "movie", m: "2001 · Animation" },
+		{ t: "Back to the Future", k: "movie", m: "1985 · Sci-fi" },
+		{ t: "Knives Out", k: "movie", m: "2019 · Mystery" },
+		{ t: "Paddington 2", k: "movie", m: "2017 · Family" },
+		{ t: "Top Gun: Maverick", k: "movie", m: "2022 · Action" },
+		{ t: "The Office", k: "tv", m: "TV · Comedy" },
+		{ t: "Avatar: The Last Airbender", k: "tv", m: "TV · Animation" },
+		{ t: "Planet Earth", k: "tv", m: "TV · Documentary" },
+		{ t: "Ted Lasso", k: "tv", m: "TV · Comedy" },
+		{ t: "Abbott Elementary", k: "tv", m: "TV · Comedy" },
+		{ t: "The Mandalorian", k: "tv", m: "TV · Sci-fi" }
+	];
+	var COLORS = ["#2f3237", "#383c42"];
+	var cv = document.getElementById("wheel"), cx = cv.getContext("2d");
+	var spinBtn = document.getElementById("spin");
+	var rTitle = document.getElementById("r-title"), rMeta = document.getElementById("r-meta");
+	var filter = "all", items = LIB.slice(), angle = 0, spinning = false;
+	var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	function list() { return LIB.filter(function (x) { return filter === "all" || x.k === filter; }); }
+
+	function draw() {
+		var W = cv.width, R = W / 2, n = items.length, seg = Math.PI * 2 / n;
+		cx.clearRect(0, 0, W, W);
+		cx.save(); cx.translate(R, R); cx.rotate(angle);
+		for (var i = 0; i < n; i++) {
+			cx.beginPath(); cx.moveTo(0, 0);
+			cx.arc(0, 0, R - 12, i * seg, (i + 1) * seg); cx.closePath();
+			cx.fillStyle = COLORS[i % 2]; cx.fill();
+			cx.strokeStyle = "#1f2125"; cx.lineWidth = 3; cx.stroke();
+			cx.save(); cx.rotate(i * seg + seg / 2);
+			cx.fillStyle = "#f2f0ea"; cx.textAlign = "right"; cx.textBaseline = "middle";
+			cx.font = "600 " + (n > 8 ? 26 : 32) + "px 'Inter Tight', system-ui, sans-serif";
+			var label = items[i].t.length > 20 ? items[i].t.slice(0, 19) + "…" : items[i].t;
+			cx.fillText(label, R - 44, 0);
+			cx.restore();
+		}
+		cx.restore();
+		cx.beginPath(); cx.arc(R, R, R - 8, 0, Math.PI * 2); cx.strokeStyle = "#e5a00d"; cx.lineWidth = 8; cx.stroke();
+		cx.beginPath(); cx.arc(R, R, 46, 0, Math.PI * 2); cx.fillStyle = "#e5a00d"; cx.fill();
+		cx.beginPath(); cx.moveTo(R - 12, R - 18); cx.lineTo(R + 20, R); cx.lineTo(R - 12, R + 18); cx.closePath(); cx.fillStyle = "#1f2125"; cx.fill();
+	}
+
+	function pickedIndex() {
+		var n = items.length, seg = Math.PI * 2 / n;
+		var a = ((-Math.PI / 2 - angle) % (Math.PI * 2) + Math.PI * 4) % (Math.PI * 2);
+		return Math.floor(a / seg) % n;
+	}
+
+	function show(it) { rTitle.textContent = it.t; rMeta.textContent = it.m; }
+
+	function spin() {
+		if (spinning || !items.length) return;
+		spinning = true; spinBtn.disabled = true; spinBtn.textContent = "Spinning…";
+		var start = angle, delta = Math.PI * 2 * (5 + Math.random() * 3) + Math.random() * Math.PI * 2;
+		var dur = reduce ? 1 : 4200, t0 = performance.now();
+		function step(now) {
+			var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+			angle = start + delta * e; draw();
+			if (p < 1) { requestAnimationFrame(step); return; }
+			spinning = false; spinBtn.disabled = false; spinBtn.textContent = "Spin again";
+			show(items[pickedIndex()]);
+		}
+		requestAnimationFrame(step);
+	}
+
+	document.querySelectorAll(".seg button").forEach(function (b) {
+		b.addEventListener("click", function () {
+			if (spinning) return;
+			filter = b.getAttribute("data-f");
+			document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+			items = list(); draw();
+		});
+	});
+	spinBtn.addEventListener("click", spin);
+	if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+	draw();
+	show(items[pickedIndex()]);
+	rTitle.textContent = items[pickedIndex()].t;
+	rMeta.textContent = "Under the pointer right now. Spin to roll for real.";
+})();
+</script>
+</body>
+</html>
