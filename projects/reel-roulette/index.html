@@ -1,171 +1,1470 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Reel Roulette Sample</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@400;600&display=swap" />
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#1B1B1B">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body><title>Reel Roulette</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <style>
-	:root {
-		color-scheme: dark;
-		--bg: #1f2125;
-		--panel: #2a2d32;
-		--line: #3a3e45;
-		--ink: #f2f0ea;
-		--ink-soft: #a9a8a3;
-		--gold: #e5a00d;
-		--display: "Bebas Neue", "Oswald", Impact, sans-serif;
-		--body: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
-	}
-	* { box-sizing: border-box; }
-	html, body { margin: 0; }
-	body {
-		background: var(--bg); color: var(--ink); font-family: var(--body);
-		min-height: 100vh;
-		padding: max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 32px max(16px, env(safe-area-inset-left, 0px));
-		display: flex; justify-content: center;
-	}
-	main { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 18px; }
-	header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-	h1 { font-family: var(--display); font-weight: 400; font-size: 2.6rem; letter-spacing: 0.04em; margin: 0; line-height: 1; }
-	h1 span { color: var(--gold); }
-	.badge { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px; white-space: nowrap; }
-	.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--panel); border-radius: 10px; padding: 4px; gap: 4px; }
-	.seg button { font: 600 0.85rem var(--body); color: var(--ink-soft); background: transparent; border: 0; border-radius: 7px; padding: 9px 0; cursor: pointer; }
-	.seg button[aria-pressed="true"] { background: var(--gold); color: #1f2125; }
-	.wheel-wrap { position: relative; width: 100%; max-width: 100%; aspect-ratio: 1; }
-	canvas { width: 100%; height: 100%; display: block; }
-	.pointer { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 26px solid var(--gold); filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
-	.spin {
-		font-family: var(--display); font-size: 1.7rem; letter-spacing: 0.08em;
-		background: var(--gold); color: #1f2125; border: 0; border-radius: 12px; padding: 12px; cursor: pointer;
-	}
-	.spin:disabled { opacity: 0.55; cursor: default; }
-	button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-	.result { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; min-height: 92px; }
-	.result small { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
-	.result h2 { font-family: var(--display); font-weight: 400; font-size: 2rem; letter-spacing: 0.03em; margin: 4px 0 2px; color: var(--gold); line-height: 1.05; }
-	.result p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
-	.note { font-size: 0.8rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
-	.note a { color: var(--gold); }
-	@media (prefers-reduced-motion: reduce) { .spin { transition: none; } }
+@font-face{font-family:"Bricolage Grotesque";src:url("fonts/bricolage.woff2") format("woff2");font-weight:200 800;font-display:swap}
+@font-face{font-family:"Figtree";src:url("fonts/figtree.woff2") format("woff2");font-weight:300 900;font-display:swap}
+:root{
+  --ink:#1B1B1B; --ink-2:#252525; --ink-3:#2F2F2F; --line:#3C3C3C;
+  --text:#F2F2F2; --muted:#A9A9A9;
+  --accent:#E5A00D; --accent-ink:#1B1B1B;
+  --coral:#FF6B57; --amber:var(--accent); --mint:#2ED3A0; --sky:#4C9DFF; --violet:#9A7CFF; --rose:#FF6FB0;
+  --p0:var(--coral); --p1:var(--sky);
+  --display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+html{box-sizing:border-box}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:15px;-webkit-tap-highlight-color:transparent}
+body.lock{overflow:hidden}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.app{max-width:520px;margin:0 auto;box-sizing:border-box;min-height:100%;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 16px;
+  display:flex;flex-direction:column;gap:16px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:34px;height:34px;flex:none;display:block}
+.brand h1{font:800 21px/1 var(--display);letter-spacing:-.02em;margin:0}
+.brand small{display:block;font:500 12px/1.2 var(--body);color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;gap:8px;flex:none}
+.icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--ink-2);border:1px solid var(--line)}
+.icon-btn svg{width:18px;height:18px}
+.challenge-btn{height:42px;padding:0 16px 0 12px;border-radius:999px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;background:var(--ink-2);border:1px solid var(--line)}
+.vs{display:flex}
+.vs i{width:12px;height:12px;border-radius:50%;background:var(--p0);border:2px solid var(--ink-2)}
+.vs i+i{background:var(--p1);margin-left:-5px}
+
+.notice{font-size:13px;color:var(--muted);background:var(--ink-2);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin:0;line-height:1.45}
+.notice{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.notice span{flex:1 1 200px;min-width:0}
+.btn.sm{height:38px;padding:0 14px;font-size:14px;border-radius:11px}
+.notice .btn.primary{grid-column:auto}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 12px/1 var(--display);color:#161616;flex:none}
+.av.sm{width:30px;height:30px;font-size:13px}
+#acctBtn .av{width:32px;height:32px}
+.settings{align-items:stretch}
+.set-body{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:4px}
+.sheet .set-h{margin:10px 0 0;font:800 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.acct{display:flex;align-items:center;gap:12px}
+.acct .av{width:44px;height:44px;font-size:18px}
+.acct b,.people b{display:block;font-size:16px}
+.acct small,.people small{display:block;color:var(--muted);font-size:13px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.field select,.addg input,#pinInput{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--text);font-size:15px;min-width:0}
+.people{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.people li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.people li>div{flex:1}
+.people .av{width:34px;height:34px;font-size:14px}
+.addg{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.addg .btn{padding:0 16px}
+.fine{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.toast{position:fixed;z-index:80;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));width:min(calc(100% - 32px),460px);box-sizing:border-box;
+  display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;background:#333;border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.4);font-size:14px;animation:rise2 .25s}
+.toast span{flex:1}
+.toast .textbtn{color:var(--accent)}
+.modal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(8,8,8,.7);padding:16px}
+#pinInput{font:800 28px/1 var(--display);letter-spacing:.5em;text-align:center}
+.namepick{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.namepick button{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--ink-3);text-transform:none;letter-spacing:0;color:var(--text)}
+.notice.err{border-style:solid;border-color:rgba(255,107,87,.5);color:var(--text)}
+
+/* type switch */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{height:42px;border-radius:12px;font-weight:600;color:var(--muted);transition:background .2s,color .2s}
+.seg button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* filters */
+.filters{background:var(--ink-2);border:1px solid var(--line);border-radius:16px}
+.filters summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.filters summary::-webkit-details-marker{display:none}
+.filters summary .lbl{font-weight:700}
+.filters summary .skipped{flex:1;min-width:0;text-align:right;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filters summary .chev{width:16px;height:16px;flex:none;transition:transform .2s}
+.filters[open] summary .chev{transform:rotate(180deg)}
+.filters .body{padding:0 14px 14px;display:flex;flex-direction:column;gap:14px}
+.help{margin:0;font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;background:var(--ink-3)}
+.chip.exc{background:rgba(255,107,87,.12);border-color:rgba(255,107,87,.6);color:var(--coral);text-decoration:line-through}
+.chip.exc::before{content:"✕";font-size:10px;text-decoration:none;display:inline-block}
+.chip.inc{background:rgba(46,211,160,.14);border-color:rgba(46,211,160,.7);color:var(--mint)}
+.chip.inc::before{content:"✓";font-size:11px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:8px;height:8px;border-radius:50%}
+.frow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;cursor:pointer}
+.switch input{appearance:none;width:42px;height:24px;border-radius:99px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .2s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--text);transition:transform .2s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{transform:translateX(18px)}
+.textbtn{font-size:13px;font-weight:600;color:var(--muted);padding:6px 4px;text-decoration:underline;text-underline-offset:3px}
+
+/* wheel */
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:6px}
+.wheel-wrap{position:relative;width:min(100%,420px);aspect-ratio:1;max-width:100%;margin-block:auto}
+.wheel-wrap::before{content:"";position:absolute;inset:6%;border-radius:50%;
+  background:conic-gradient(var(--coral),var(--amber),var(--mint),var(--sky),var(--violet),var(--rose),var(--coral));
+  filter:blur(38px);opacity:.32;z-index:0}
+#wheel{position:relative;z-index:1;width:100%;height:100%;display:block}
+.pointer{position:absolute;top:-4px;left:50%;width:34px;height:42px;margin-left:-17px;z-index:3;transform-origin:50% 13px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45));will-change:transform}
+@keyframes tick{40%{transform:rotate(-14deg)}}
+.hub{position:absolute;z-index:2;left:50%;top:50%;width:25%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  background:var(--ink);border:4px solid var(--accent);color:var(--text);font:800 clamp(17px,5vw,22px)/1 var(--display);letter-spacing:.06em;
+  box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 0 0 4px var(--ink);transition:transform .15s}
+.hub:active{transform:translate(-50%,-50%) scale(.95)}
+.hub:disabled{cursor:default;color:var(--muted)}
+.toolbar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:stretch}
+.toolbar.solo{grid-template-columns:minmax(0,1fr)}
+.pwrap{position:relative;min-width:0}
+.pbtn,.csel{height:46px;box-sizing:border-box;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+.pbtn{padding:0 12px 0 7px;max-width:100%}
+.pbtn .who{display:flex;flex-direction:column;align-items:flex-start;min-width:0;line-height:1.15}
+.pbtn .who small{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pbtn .who b{font-size:14px;max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbtn .av{width:32px;height:32px;font-size:13px}
+.chev-s{width:14px;height:14px;flex:none;color:var(--muted)}
+.pmenu{position:absolute;z-index:35;top:calc(100% + 6px);left:0;min-width:240px;max-width:calc(100vw - 32px);max-height:min(60vh,420px);overflow:auto;box-sizing:border-box;
+  background:#2A2A2A;border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.5);animation:rise2 .18s}
+.pmenu h3{margin:6px 10px 6px;font:700 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pmenu button{width:100%;display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;text-align:left}
+.pmenu button:hover,.pmenu button:focus-visible{background:var(--ink-3)}
+.pmenu button[aria-checked="true"]{background:rgba(229,160,13,.14)}
+.pmenu button[aria-checked="true"]::after{content:"✓";margin-left:auto;color:var(--accent);font-weight:800}
+.pmenu .av{width:34px;height:34px;font-size:14px}
+.pmenu .nm{display:flex;flex-direction:column;min-width:0}
+.pmenu .nm b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmenu .nm small{font-size:12px;color:var(--muted)}
+.pmenu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+.pmenu .manage{color:var(--accent);font-weight:700;font-size:14px;padding:10px}
+.csel{position:relative;padding:0 12px;min-width:0}
+.csel .ci{width:18px;height:18px;flex:none;color:var(--accent)}
+.csel .cl{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.15;pointer-events:none}
+.csel .cl small{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.csel .cl b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel.on{border-color:var(--accent)}
+.csel{text-align:left;width:100%}
+/* collection sheet */
+.cpick{position:fixed;inset:0;z-index:50;background:rgba(8,8,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:fade .2s}
+.cpick-in{position:absolute;left:0;right:0;margin:0 auto;max-width:520px;box-sizing:border-box;
+  top:calc(14px + env(safe-area-inset-top,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  margin-inline:max(10px,env(safe-area-inset-left,0px)) max(10px,env(safe-area-inset-right,0px));
+  background:var(--ink-2);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;animation:rise2 .25s}
+@media (min-width:540px){.cpick-in{margin-inline:auto}}
+.cpick-h{display:flex;align-items:center;gap:12px;padding:16px 14px 10px 18px}
+.cpick-h h2{margin:0;flex:1;font:800 20px/1 var(--display);letter-spacing:-.01em}
+.cpick-h .sheet-x{position:static!important}
+.cpick-s{margin:0 14px 8px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px;color:var(--text)}
+.cpick-list{flex:1;overflow:auto;padding:0 8px 10px;overscroll-behavior:contain}
+.cpick-list h3{position:sticky;top:0;z-index:1;margin:0;padding:12px 10px 6px;background:var(--ink-2);font:700 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cpick-list button{width:100%;display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;text-align:left;font-size:14px;font-weight:500;color:var(--text)}
+.cpick-list button:hover,.cpick-list button:focus-visible{background:var(--ink-3)}
+.cpick-list button[aria-checked="true"]{background:rgba(229,160,13,.14);font-weight:700}
+.cpick-list button[aria-checked="true"]::after{content:"✓";margin-left:auto;color:var(--accent);font-weight:800}
+.cpick-list .none{padding:18px 10px;color:var(--muted);font-size:14px}
+/* challenge menu */
+.card.chal{padding:0;gap:0;max-height:100%;overflow:hidden;align-self:center}
+.chal-head{padding:20px 20px 14px;display:flex;flex-direction:column;gap:14px;flex:none;border-bottom:1px solid var(--line)}
+.chal-games{flex:1;min-height:0;overflow:auto;padding:14px 20px;overscroll-behavior:contain;touch-action:pan-y}
+.chal-foot{flex:none;padding:12px 20px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;border-top:1px solid var(--line)}
+.chal-foot .btn{height:46px}
+.chal-foot .btn.primary{grid-column:auto}
+.chal-foot .btn svg{width:18px;height:18px;flex:none}
+.players{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pl>span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pl>span i{width:9px;height:9px;border-radius:50%}
+.plbtn{height:46px;display:flex;align-items:center;gap:8px;padding:0 10px 0 6px;border-radius:12px;border:1px solid var(--line);background:var(--ink);font-weight:600;font-size:14px;min-width:0}
+.plbtn b{flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plbtn .av{width:30px;height:30px;font-size:12px}
+.pmenu.floating{position:fixed;z-index:96;top:0;left:0;min-width:220px}
+.pmenu .typein{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:6px 4px 4px}
+.pmenu .typein input{min-width:0;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:15px;color:var(--text)}
+.pmenu .typein button{width:auto;padding:0 14px;background:var(--accent);color:var(--accent-ink);font-weight:700;justify-content:center}
+/* Dos */
+.dos{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.dos .pile{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dos .hand{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:100%}
+.dcard{width:clamp(46px,13vw,60px);aspect-ratio:2/3;border-radius:10px;display:grid;place-items:center;font:800 clamp(22px,7vw,30px)/1 var(--display);color:#161616;
+  border:3px solid #F2F2F2;box-shadow:0 6px 14px rgba(0,0,0,.35);position:relative;transition:transform .15s,opacity .15s}
+.dcard::after{content:"";position:absolute;inset:18% 12%;border-radius:50%;border:2px solid rgba(255,255,255,.35);transform:rotate(-30deg)}
+.dcard.sm{width:44px;font-size:22px}
+.hand .dcard{cursor:pointer}
+.hand .dcard.ok{transform:translateY(-6px)}
+.hand .dcard.no{opacity:.4}
+.dos.wait .hand .dcard{opacity:.55;transform:none}
+.dos .row{display:flex;gap:8px}
+.dos .row .btn{height:40px;padding:0 16px;font-size:14px}
+.dos .turn{margin:0;font:800 22px/1 var(--display)}
+.dos.wait .turn{color:var(--muted);font-size:17px}
+.dosflash{font:800 54px/1 var(--display);color:var(--accent);animation:slam .45s cubic-bezier(.3,1.6,.5,1)}
+/* Color clash */
+.clash{font:800 clamp(44px,15vw,72px)/1 var(--display);letter-spacing:-.02em;min-height:1em}
+.pips{display:flex;gap:8px}
+.pips i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}
+.pips i.on{background:var(--accent);border-color:var(--accent)}
+.csel select{display:none}
+.av{position:relative;overflow:hidden}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profiles{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.profiles>span{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pchips{display:flex;gap:8px;flex-wrap:wrap}
+.pchip{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 5px;border-radius:999px;border:1px solid var(--line);background:var(--ink-2);font-weight:600;font-size:14px}
+.pchip .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 12px/1 var(--display);color:var(--ink)}
+.pchip[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.poolline{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.poolline b{color:var(--text)}
+
+/* result sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(8,8,8,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:fade .25s}
+.sheet{position:fixed;z-index:41;left:0;right:0;bottom:0;margin:0 auto;max-width:520px;max-height:92%;overflow:auto;box-sizing:border-box;
+  background:var(--ink-2);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;
+  padding:22px max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;align-items:center;gap:12px;animation:rise .4s cubic-bezier(.2,.9,.3,1.1)}
+.sheet-bg{position:absolute;left:0;right:0;top:0;height:260px;background-size:cover;background-position:center;filter:blur(34px) saturate(1.3);opacity:.45;
+  -webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);pointer-events:none;border-radius:26px 26px 0 0}
+.sheet>*:not(.sheet-bg){position:relative}
+.sheet-x{position:absolute!important;top:12px;right:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(20,20,20,.55);border:1px solid var(--line);z-index:2}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin-top:-10px}
+.poster{width:100%;aspect-ratio:2/3;border-radius:12px;overflow:hidden;box-shadow:0 22px 44px rgba(0,0,0,.55);background:var(--ink-3);animation:flip .6s .1s both cubic-bezier(.2,.9,.3,1.2)}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.gp{container-type:inline-size;width:100%;height:100%;position:relative;overflow:hidden;display:block;color:#fff}
+.gp>*{position:absolute}
+.gp .sun{width:44cqw;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,248,230,.95) 0 34%,rgba(255,236,190,.35) 52%,rgba(255,236,190,0) 72%)}
+.gp .hill{inset:0}
+.gp .grain{inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 62%,rgba(0,0,0,.55) 100%)}
+.gp .t{left:8cqw;right:8cqw;top:8cqw;font:800 15cqw/.95 var(--display);letter-spacing:-.02em;text-wrap:balance;text-shadow:0 1cqw 4cqw rgba(0,0,0,.35);overflow-wrap:anywhere}
+.gp .k{left:8cqw;right:8cqw;bottom:15cqw;font:700 5.2cqw/1 var(--body);letter-spacing:.24em;text-transform:uppercase;text-align:center;opacity:.85}
+.gp .bill{left:14cqw;right:14cqw;bottom:6cqw;height:5cqw;background:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45)) top/100% 1.1cqw no-repeat,linear-gradient(rgba(255,255,255,.3),rgba(255,255,255,.3)) bottom/72% 1.1cqw no-repeat}
+.eyebrow{margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.sheet h2{margin:0;font:800 clamp(21px,6vw,26px)/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance;overflow-wrap:anywhere}
+.facts{margin:0;color:var(--muted);font-size:13px;line-height:1.45;font-variant-numeric:tabular-nums}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--ink-3);border:1px solid var(--line)}
+.r-head{display:grid;grid-template-columns:minmax(0,clamp(96px,30vw,128px)) minmax(0,1fr);gap:16px;align-items:center;width:100%;margin-top:6px}
+.r-meta{display:flex;flex-direction:column;gap:7px;min-width:0;padding-right:26px}
+.r-sum{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.summary{margin:0;font-size:14.5px;line-height:1.5;color:#D8D8D8;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.summary.open{display:block}
+.more{padding:2px 0}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.sheet .btn{height:46px}
+.btn{height:50px;border-radius:14px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;
+  background:var(--ink-3);border:1px solid var(--line);color:var(--text);box-sizing:border-box}
+.btn.primary{grid-column:1/-1;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary[aria-disabled="true"]{background:var(--ink-3);color:var(--muted);border-color:var(--line);pointer-events:none}
+.note{margin:0;font-size:12px;color:var(--muted);text-align:center}
+@keyframes rise{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+@keyframes flip{from{transform:perspective(600px) rotateY(-80deg) scale(.8);opacity:0}}
+
+/* challenge arena */
+.arena{position:fixed;inset:0;z-index:60;background:var(--ink);display:grid;grid-template-rows:1fr auto 1fr;touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+.half{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;overflow:hidden;box-sizing:border-box;
+  padding:16px max(16px,env(safe-area-inset-left,0px));transition:background .15s}
+.half.p0{background:radial-gradient(circle at 50% 75%,rgba(255,107,87,.18),transparent 70%);color:var(--text);padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.half.p1{background:radial-gradient(circle at 50% 75%,rgba(76,157,255,.18),transparent 70%);transform:rotate(180deg);padding-bottom:calc(16px + env(safe-area-inset-top,0px))}
+.half.wait{background:#242424}
+.half.go{background:var(--mint);color:var(--ink)}
+.half.win{background:radial-gradient(circle at 50% 50%,rgba(255,180,63,.28),transparent 75%)}
+.half .who{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+.half.p0 .who{color:var(--p0)} .half.p1 .who{color:var(--p1)}
+.count{font:800 120px/1 var(--display);animation:pulse .7s ease-out}
+@keyframes pulse{from{transform:scale(1.5);opacity:0}}
+.big{font:800 44px/1 var(--display);margin:0;letter-spacing:-.02em}
+.hint{margin:0;color:var(--muted);font-size:15px}
+.half.go .hint{color:var(--ink)}
+.mid{position:relative;z-index:4;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ink-2);border-block:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.score{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;min-width:0}
+.score.top{transform:rotate(180deg)}
+.score .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.score .nm{max-width:28vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score b{font:800 24px/1 var(--display);font-variant-numeric:tabular-nums}
+.exit{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--ink-3);border:1px solid var(--line);flex:none}
+#hockey{position:absolute;inset:0;width:100%;height:100%;z-index:3;touch-action:none}
+.arena.hockey .mid{background:transparent;border-color:transparent;pointer-events:none}
+.arena.hockey .mid .exit{pointer-events:auto}
+.arena.hockey .mid{justify-content:flex-end}.arena.hockey .mid .score{display:none}
+
+.panel{position:absolute;inset:0;z-index:6;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center;background:rgba(14,14,14,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto;touch-action:auto}
+.card{width:min(100%,420px);box-sizing:border-box;background:var(--ink-2);border:1px solid var(--line);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:16px;animation:rise2 .35s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes rise2{from{transform:translateY(24px);opacity:0}}
+.card h2{margin:0;font:800 28px/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.card p{margin:0;color:var(--muted);line-height:1.45}
+.names{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.names label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.names label span{display:flex;align-items:center;gap:6px}
+.names label i{width:9px;height:9px;border-radius:50%}
+.names input{min-width:0;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;text-transform:none;letter-spacing:0;font-weight:600}
+.games{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.game{text-align:left;border-radius:16px;padding:14px;background:var(--ink-3);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;transition:transform .15s,border-color .15s}
+.game:active{transform:scale(.97)}
+.game:hover{border-color:var(--muted)}
+.game .gi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--ink)}
+.game .gi svg{width:20px;height:20px}
+.game b{font-size:15px}
+.game small{font-size:12px;color:var(--muted);line-height:1.35}
+.card .btn{width:100%}
+.winline{font:800 34px/1.05 var(--display);margin:0;letter-spacing:-.02em}
+.tally{display:flex;justify-content:center;gap:18px;font-variant-numeric:tabular-nums;font-weight:700}
+.tally span{display:flex;align-items:center;gap:8px}
+.tally i{width:10px;height:10px;border-radius:50%}
+.tally b{font:800 30px/1 var(--display)}
+
+/* balloon */
+.bwrap{display:flex;flex-direction:column;align-items:center;height:min(30vh,230px);justify-content:flex-end}
+.balloon{height:min(24vh,180px);aspect-ratio:.84;border-radius:50% 50% 47% 47% / 56% 56% 44% 44%;transform:scale(.3);transform-origin:50% 100%;transition:transform .09s ease-out;position:relative}
+.balloon.b0{background:radial-gradient(circle at 32% 28%,#FFD9D1 0 7%,var(--coral) 32%,#B93A2A)}
+.balloon.b1{background:radial-gradient(circle at 32% 28%,#D6E8FF 0 7%,var(--sky) 32%,#2A62B8)}
+.balloon::after{content:"";position:absolute;bottom:-7px;left:50%;width:14px;height:9px;margin-left:-7px;background:inherit;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.balloon.pop{animation:pop .22s forwards}
+@keyframes pop{to{transform:scale(1.7);opacity:0;filter:blur(6px)}}
+.string{width:2px;height:34px;background:var(--muted);opacity:.45}
+.bar{width:min(60%,240px);height:8px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:9px;transition:width .08s}
+.half.p0 .bar i{background:var(--p0)} .half.p1 .bar i{background:var(--p1)}
+
+/* court */
+.btn.court{grid-column:1/-1;border:1.5px solid transparent;background:linear-gradient(var(--ink-3),var(--ink-3)) padding-box,linear-gradient(90deg,var(--coral),var(--amber),var(--sky)) border-box}
+.btn.court[aria-disabled="true"]{background:var(--ink-3);border-color:var(--line);color:var(--muted);pointer-events:none}
+.btn.court svg{width:18px;height:18px}
+.poster-wrap{position:relative}
+.stamp{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-12deg);padding:5px 8px;border:2.5px solid var(--amber);border-radius:7px;color:var(--amber);
+  font:800 14px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:rgba(20,20,20,.72);animation:stamp .45s .5s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes stamp{from{transform:translate(-50%,-50%) rotate(-12deg) scale(2.4);opacity:0}}
+.objection{margin:0;font:800 44px/1 var(--display);letter-spacing:-.02em;color:var(--amber);transform:rotate(-3deg);animation:slam .45s cubic-bezier(.3,1.6,.5,1)}
+.objection.sm{font-size:30px}
+@keyframes slam{from{transform:rotate(-3deg) scale(2);opacity:0}}
+.court-pick{display:flex;align-items:center;gap:14px;background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:10px}
+.court-pick .mini{width:54px;flex:none;aspect-ratio:2/3;border-radius:7px;overflow:hidden}
+.court-pick .mini img{width:100%;height:100%;object-fit:cover;display:block}
+.court-pick .mini .gp .k,.court-pick .mini .gp .bill{display:none}
+.court-pick b{display:block;font-size:17px;line-height:1.2}
+.court-pick .eyebrow{font-size:11px;margin-bottom:3px}
+.who-btn{display:flex;align-items:center;justify-content:center;gap:8px}
+.who-btn i{width:10px;height:10px;border-radius:50%}
+.stakes{color:var(--text)!important;font-size:16px}
+.verdict{align-self:center;padding:8px 16px;border:3px solid currentColor;border-radius:10px;font:800 34px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-6deg);animation:slam .45s cubic-bezier(.3,1.6,.5,1)}
+.verdict.sus{color:var(--mint)} .verdict.over{color:var(--coral)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
-</head>
-<body>
-<main>
-	<header>
-		<h1>Reel <span>Roulette</span></h1>
-		<span class="badge">Sample</span>
-	</header>
 
-	<div class="seg" role="group" aria-label="What to spin">
-		<button type="button" id="f-all" data-f="all" aria-pressed="true">Everything</button>
-		<button type="button" id="f-movie" data-f="movie" aria-pressed="false">Movies</button>
-		<button type="button" id="f-tv" data-f="tv" aria-pressed="false">TV</button>
-	</div>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46.9" fill="#1B1B1B" stroke="#E5A00D" stroke-width="2.2"/><path d="M50 50L50.00 6.10A43.90 43.90 0 0 1 88.02 28.05Z" fill="#FF6B57"/><path d="M50 50L88.02 28.05A43.90 43.90 0 0 1 88.02 71.95Z" fill="#9A7CFF"/><path d="M50 50L88.02 71.95A43.90 43.90 0 0 1 50.00 93.90Z" fill="#2ED3A0"/><path d="M50 50L50.00 93.90A43.90 43.90 0 0 1 11.98 71.95Z" fill="#4C9DFF"/><path d="M50 50L11.98 71.95A43.90 43.90 0 0 1 11.98 28.05Z" fill="#FFB43F"/><path d="M50 50L11.98 28.05A43.90 43.90 0 0 1 50.00 6.10Z" fill="#FF6FB0"/><g stroke="#1B1B1B" stroke-width="1.6"><line x1="50" y1="50" x2="50.00" y2="6.10"/><line x1="50" y1="50" x2="88.02" y2="28.05"/><line x1="50" y1="50" x2="88.02" y2="71.95"/><line x1="50" y1="50" x2="50.00" y2="93.90"/><line x1="50" y1="50" x2="11.98" y2="71.95"/><line x1="50" y1="50" x2="11.98" y2="28.05"/></g><circle cx="50" cy="50" r="21.95" fill="#1B1B1B"/></svg>
+      <div style="min-width:0">
+        <h1>Reel Roulette</h1>
+        <small id="source">Loading library…</small>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="acctBtn" aria-label="Sign in and people"></button>
+      <button class="challenge-btn" id="challengeBtn"><span class="vs" aria-hidden="true"><i></i><i></i></span>Challenge</button>
+    </div>
+  </header>
 
-	<div class="wheel-wrap">
-		<canvas id="wheel" width="880" height="880" aria-label="Spinning wheel of titles"></canvas>
-		<div class="pointer" aria-hidden="true"></div>
-	</div>
+  <p class="notice" id="notice" hidden></p>
 
-	<button type="button" class="spin" id="spin">Spin</button>
+  <div class="toolbar" id="toolbar">
+    <div class="pwrap">
+      <button class="pbtn" id="pBtn" aria-haspopup="true" aria-expanded="false"><span id="pAv"></span><span class="who"><small>Spinning as</small><b id="pName"></b></span><svg class="chev-s" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg></button>
+      <div class="pmenu" id="pMenu" role="menu" aria-label="Who's spinning" hidden></div>
+    </div>
+    <button class="csel" id="colWrap" hidden aria-haspopup="dialog">
+      <svg class="ci" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="11" height="11" rx="2"/><path d="M6 3.5h9.5a1.5 1.5 0 0 1 1.5 1.5v9.5"/></svg>
+      <span class="cl"><small>Collection</small><b id="colName">All titles</b></span>
+      <svg class="chev-s" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>
+    </button>
+  </div>
 
-	<section class="result" aria-live="polite" id="result">
-		<small>Tonight's pick</small>
-		<h2 id="r-title">Give it a spin</h2>
-		<p id="r-meta">Pick a filter and spin the wheel.</p>
-	</section>
+  <div class="seg" role="radiogroup" aria-label="What to watch" id="typeSeg">
+    <button role="radio" data-type="movie" aria-checked="true">Movies</button>
+    <button role="radio" data-type="show" aria-checked="false">TV Shows</button>
+    <button role="radio" data-type="both" aria-checked="false">Both</button>
+  </div>
 
-	<p class="note">This is a public demo with a sample list. The full app runs on my home server, pulls the library and posters from Plex, filters by genre and watchlist, and has two-player challenge games. <a href="../../index.html#projects">Back to Walker's site</a></p>
-</main>
+  <details class="filters" id="filters">
+    <summary>
+      <span class="lbl">Filters</span>
+      <span class="skipped" id="skipped"></span>
+      <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>
+    </summary>
+    <div class="body">
+      <p class="help">Tap a genre to cycle it. Pick one or more "Only" genres for a genre night.</p>
+      <div class="legend"><span><i style="background:var(--mint)"></i>1 tap: Only this</span><span><i style="background:var(--coral)"></i>2 taps: Skip it</span><span><i style="background:var(--line)"></i>3 taps: Clear</span></div>
+      <div class="chips" id="chips"></div>
+      <div class="frow">
+        <label class="switch"><input type="checkbox" id="unwatched"> Unwatched only</label>
+        <label class="switch" id="wlWrap"><input type="checkbox" id="watchlist"> <span id="wlLabel">Watchlist only</span></label>
+      </div>
+      <p class="help" id="wlNote" hidden></p>
+      <div class="frow" style="justify-content:flex-end"><button class="textbtn" id="resetBtn">Reset filters</button></div>
+    </div>
+  </details>
+
+  <main class="stage">
+    <div class="wheel-wrap">
+      <svg class="pointer" id="pointer" viewBox="0 0 34 42" aria-hidden="true"><path d="M17 41 3 12a14 14 0 1 1 28 0Z" fill="#E5A00D"/><circle cx="17" cy="13" r="5" fill="#1B1B1B"/></svg>
+      <canvas id="wheel" aria-label="Spinner wheel"></canvas>
+      <button class="hub" id="spinBtn">SPIN</button>
+    </div>
+    <div class="poolline">
+      <span id="poolText"></span>
+      <button class="textbtn" id="shuffleBtn">Shuffle wheel</button>
+    </div>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet settings" id="settings" hidden aria-label="Account and people">
+  <div class="grab" aria-hidden="true"></div>
+  <button class="sheet-x" id="setX" aria-label="Close"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+  <div class="set-body" id="setBody"></div>
+</section>
+<div class="toast" id="toast" hidden role="status"></div>
+<div class="cpick" id="cpick" hidden>
+  <div class="cpick-in" role="dialog" aria-modal="true" aria-labelledby="cpTitle">
+    <div class="cpick-h"><h2 id="cpTitle">Collections</h2><button class="sheet-x" id="cpX" aria-label="Close"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M3 3l10 10M13 3 3 13"/></svg></button></div>
+    <input class="cpick-s" id="cpSearch" placeholder="Search collections" autocomplete="off" aria-label="Search collections">
+    <div class="cpick-list" id="cpList"></div>
+  </div>
+</div>
+<div class="modal" id="pinModal" hidden>
+  <form class="card" id="pinForm">
+    <h2>Plex Home PIN</h2><p id="pinWho"></p>
+    <input id="pinInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="PIN">
+    <div class="actions" style="margin:0"><button type="button" class="btn" id="pinCancel">Cancel</button><button class="btn primary" style="grid-column:auto" type="submit">Unlock</button></div>
+  </form>
+</div>
+<section class="sheet" id="sheet" hidden aria-live="polite" aria-label="Tonight's pick">
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="grab" aria-hidden="true"></div>
+  <button class="sheet-x" id="sheetX" aria-label="Close"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+  <div class="r-head">
+    <div class="poster-wrap"><div class="poster" id="poster"></div><div class="stamp" id="stamp" hidden>Final pick</div></div>
+    <div class="r-meta">
+      <p class="eyebrow" id="rEyebrow"></p>
+      <h2 id="rTitle"></h2>
+      <p class="facts" id="rFacts"></p>
+      <div class="tags" id="rTags"></div>
+    </div>
+  </div>
+  <div class="r-sum"><p class="summary" id="rSummary"></p><button class="textbtn more" id="rMore" hidden>More</button></div>
+  <div class="actions">
+    <a class="btn primary" id="rOpen" target="_blank" rel="noopener">Open in Plex</a>
+    <button class="btn court" id="rChallenge"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m11 3 6 6M8.5 5.5l6 6M9.75 4.25 4 10m11.75-.25L10 15.5M7 13l-4 4"/></svg><span id="rChallengeTxt">Challenge this pick</span></button>
+    <button class="btn" id="rAgain">Spin again</button>
+    <button class="btn" id="rVeto">Not tonight</button>
+  </div>
+  <p class="note" id="rNote" hidden>Sign in with Plex to open titles in Plex.</p>
+</section>
+
+<div class="arena" id="arena" hidden>
+  <div class="half p1" id="half1"></div>
+  <div class="mid">
+    <div class="score top"><span class="dot" style="background:var(--p1)"></span><span class="nm" id="nm1"></span><b id="sc1">0</b></div>
+    <button class="exit" id="exitBtn" aria-label="Leave challenge"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+    <div class="score"><span class="dot" style="background:var(--p0)"></span><span class="nm" id="nm0"></span><b id="sc0">0</b></div>
+  </div>
+  <div class="half p0" id="half0"></div>
+  <canvas id="hockey" hidden></canvas>
+  <div class="panel" id="panel" hidden></div>
+</div>
 
 <script>
-(function () {
-	var LIB = [
-		{ t: "The Princess Bride", k: "movie", m: "1987 · Adventure" },
-		{ t: "Spirited Away", k: "movie", m: "2001 · Animation" },
-		{ t: "Back to the Future", k: "movie", m: "1985 · Sci-fi" },
-		{ t: "Knives Out", k: "movie", m: "2019 · Mystery" },
-		{ t: "Paddington 2", k: "movie", m: "2017 · Family" },
-		{ t: "Top Gun: Maverick", k: "movie", m: "2022 · Action" },
-		{ t: "The Office", k: "tv", m: "TV · Comedy" },
-		{ t: "Avatar: The Last Airbender", k: "tv", m: "TV · Animation" },
-		{ t: "Planet Earth", k: "tv", m: "TV · Documentary" },
-		{ t: "Ted Lasso", k: "tv", m: "TV · Comedy" },
-		{ t: "Abbott Elementary", k: "tv", m: "TV · Comedy" },
-		{ t: "The Mandalorian", k: "tv", m: "TV · Sci-fi" }
-	];
-	var COLORS = ["#2f3237", "#383c42"];
-	var cv = document.getElementById("wheel"), cx = cv.getContext("2d");
-	var spinBtn = document.getElementById("spin");
-	var rTitle = document.getElementById("r-title"), rMeta = document.getElementById("r-meta");
-	var filter = "all", items = LIB.slice(), angle = 0, spinning = false;
-	var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+(()=>{
+const $=s=>document.querySelector(s);
+const PAL=['#FF6B57','#FFB43F','#2ED3A0','#4C9DFF','#9A7CFF','#FF6FB0'];
+const TAU=Math.PI*2, mod=(a,b)=>((a%b)+b)%b, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const DEFAULTS={type:'movie',included:[],excluded:[],unwatched:false,watchlist:false,sound:true,names:['Player 1','Player 2']};
+const prefs=Object.assign({},DEFAULTS,store.get('rr-prefs',{}));if(!Array.isArray(prefs.included))prefs.included=[];
+const save=()=>store.set('rr-prefs',prefs);
 
-	function list() { return LIB.filter(function (x) { return filter === "all" || x.k === filter; }); }
+/* ---------- sample library ---------- */
+const SAMPLE=[
+['Inception',2010,'m','Science Fiction/Action/Thriller',8.8,148,'PG-13','A thief who steals secrets from dreams gets one last job: plant an idea instead.'],
+['The Grand Budapest Hotel',2014,'m','Comedy/Drama',8.1,99,'R','A legendary concierge and his lobby boy get tangled in a stolen-painting caper across a fading Europe.',1],
+['Mad Max: Fury Road',2015,'m','Action/Adventure',8.1,120,'R','A two-hour chase across the desert with a war rig, a rebel driver and a lot of fire.'],
+['Get Out',2017,'m','Horror/Thriller/Mystery',7.8,104,'R','A weekend with his girlfriend\'s parents turns into something very wrong.'],
+['Hereditary',2018,'m','Horror/Drama',7.3,127,'R','After a family death, grief turns into something far more sinister.'],
+['The Conjuring',2013,'m','Horror',7.5,112,'R','Paranormal investigators help a family in a farmhouse that doesn\'t want them there.'],
+['A Quiet Place',2018,'m','Horror/Science Fiction',7.5,90,'PG-13','A family survives in silence, because the creatures outside hunt by sound.'],
+['Paddington 2',2017,'m','Family/Comedy',7.8,103,'PG','Paddington takes odd jobs to buy a birthday gift and ends up framed for theft.',4],
+['Knives Out',2019,'m','Mystery/Comedy',7.9,130,'PG-13','A famous novelist dies after his birthday party and every relative has a motive.',2],
+['Spider-Man: Into the Spider-Verse',2018,'m','Animation/Action/Family',8.4,117,'PG','Brooklyn teen Miles Morales meets Spider-people from other dimensions.'],
+['La La Land',2016,'m','Romance/Music/Drama',8.0,128,'PG-13','A jazz pianist and an aspiring actress fall in love while chasing their dreams in LA.',5],
+['Arrival',2016,'m','Science Fiction/Drama',7.9,116,'PG-13','A linguist races to understand alien visitors before the world panics.',2],
+['The Dark Knight',2008,'m','Action/Crime/Drama',9.0,152,'PG-13','Batman faces a criminal who just wants to watch Gotham burn.',1],
+['Coco',2017,'m','Animation/Family/Music',8.4,105,'PG','A boy who dreams of music crosses into the Land of the Dead on Día de Muertos.',6],
+['Top Gun: Maverick',2022,'m','Action/Drama',8.2,131,'PG-13','Maverick returns to train a new class of pilots for a near-impossible mission.'],
+['Everything Everywhere All at Once',2022,'m','Science Fiction/Comedy/Action',7.8,139,'R','A laundromat owner learns she can tap into her lives in other universes.',2],
+['Crazy Rich Asians',2018,'m','Romance/Comedy',6.9,120,'PG-13','A professor meets her boyfriend\'s ultra-wealthy family in Singapore.',4],
+['Interstellar',2014,'m','Science Fiction/Adventure/Drama',8.7,169,'PG-13','Astronauts travel through a wormhole looking for a new home for humanity.'],
+['The Shawshank Redemption',1994,'m','Drama',9.3,142,'R','Two prisoners build a friendship over decades inside Shawshank.',1],
+['Us',2019,'m','Horror/Thriller',6.8,116,'R','A family\'s beach vacation goes sideways when their doubles show up.'],
+['Back to the Future',1985,'m','Science Fiction/Comedy/Adventure',8.5,116,'PG','Marty McFly accidentally travels to 1955 and has to get his parents together.'],
+['Black Panther',2018,'m','Action/Adventure',7.3,134,'PG-13','T\'Challa returns home to Wakanda to take the throne, and a challenger appears.'],
+['The Notebook',2004,'m','Romance/Drama',7.8,123,'PG-13','A summer romance in the 1940s is told decades later from a worn notebook.',4],
+['Dune',2021,'m','Science Fiction/Adventure',8.0,155,'PG-13','A noble family takes control of the desert planet Arrakis, and enemies close in.',2],
+['Hidden Figures',2016,'m','Drama/History',7.8,127,'PG','Three Black women mathematicians at NASA help launch John Glenn into orbit.',6],
+['Glass Onion',2022,'m','Mystery/Comedy',7.1,139,'PG-13','Benoit Blanc joins a tech billionaire\'s private-island murder-mystery party.'],
+['John Wick',2014,'m','Action/Thriller',7.4,101,'R','A retired hitman comes back for the people who took the last thing he had.'],
+['Barbie',2023,'m','Comedy/Fantasy',6.8,114,'PG-13','Barbie starts having very un-Barbie thoughts and heads to the real world.'],
+['It',2017,'m','Horror/Fantasy',7.3,135,'R','A group of kids in Derry face a shape-shifting clown that feeds on fear.'],
+['Ted Lasso',2020,'t','Comedy/Drama',8.8,3,'TV-MA','An American football coach is hired to manage an English soccer club.',5],
+['Stranger Things',2016,'t','Science Fiction/Horror/Drama',8.7,4,'TV-14','Kids in a small Indiana town uncover a secret lab and a door to another world.'],
+['The Bear',2022,'t','Comedy/Drama',8.5,3,'TV-MA','A fine-dining chef comes home to run his family\'s chaotic Chicago sandwich shop.',2],
+['Severance',2022,'t','Science Fiction/Thriller/Mystery',8.7,2,'TV-MA','Office workers have their work memories surgically split from their home lives.',2],
+['Abbott Elementary',2021,'t','Comedy',8.2,4,'TV-PG','A documentary crew follows teachers at an underfunded Philadelphia school.',4],
+['The Office',2005,'t','Comedy',9.0,9,'TV-14','A mockumentary about the employees of a paper company in Scranton.',1],
+['Breaking Bad',2008,'t','Crime/Drama/Thriller',9.5,5,'TV-MA','A chemistry teacher with a terminal diagnosis turns to cooking meth.'],
+['The Haunting of Hill House',2018,'t','Horror/Drama',8.6,1,'TV-MA','Siblings who grew up in a famous haunted house face their past.'],
+['Only Murders in the Building',2021,'t','Mystery/Comedy',8.1,4,'TV-MA','Three neighbors who love true crime start a podcast about a death in their building.'],
+['Planet Earth II',2016,'t','Documentary',9.5,1,'TV-G','A tour of islands, jungles, deserts and cities through the animals that live there.'],
+['Schitt\'s Creek',2015,'t','Comedy',8.5,6,'TV-14','A rich family loses everything and moves to a tiny town they once bought as a joke.',4],
+['Arcane',2021,'t','Animation/Action/Drama',9.0,2,'TV-14','Two sisters end up on opposite sides of a war between a city and its undercity.'],
+['Shōgun',2024,'t','Drama/History',8.6,1,'TV-MA','An English navigator shipwrecked in feudal Japan gets caught in a power struggle.',2],
+['Insecure',2016,'t','Comedy/Drama',8.0,5,'TV-MA','Issa and her best friend Molly navigate work, love and their twenties in LA.',4],
+['The Last of Us',2023,'t','Drama/Action/Adventure',8.7,2,'TV-MA','A smuggler escorts a teenage girl across a collapsed America.'],
+];
+const sampleItems=()=>SAMPLE.map((r,i)=>({id:'s'+i,title:r[0],year:r[1],type:r[2]==='m'?'movie':'show',genres:r[3].split('/'),rating:r[4],
+  minutes:r[2]==='m'?r[5]:null,seasons:r[2]==='t'?r[5]:null,contentRating:r[6],summary:r[7],watched:!!((r[8]||0)&1),inProgress:false,thumb:null,_f:r[8]||0}));
 
-	function draw() {
-		var W = cv.width, R = W / 2, n = items.length, seg = Math.PI * 2 / n;
-		cx.clearRect(0, 0, W, W);
-		cx.save(); cx.translate(R, R); cx.rotate(angle);
-		for (var i = 0; i < n; i++) {
-			cx.beginPath(); cx.moveTo(0, 0);
-			cx.arc(0, 0, R - 12, i * seg, (i + 1) * seg); cx.closePath();
-			cx.fillStyle = COLORS[i % 2]; cx.fill();
-			cx.strokeStyle = "#1f2125"; cx.lineWidth = 3; cx.stroke();
-			cx.save(); cx.rotate(i * seg + seg / 2);
-			cx.fillStyle = "#f2f0ea"; cx.textAlign = "right"; cx.textBaseline = "middle";
-			cx.font = "600 " + (n > 8 ? 26 : 32) + "px 'Inter Tight', system-ui, sans-serif";
-			var label = items[i].t.length > 20 ? items[i].t.slice(0, 19) + "…" : items[i].t;
-			cx.fillText(label, R - 44, 0);
-			cx.restore();
-		}
-		cx.restore();
-		cx.beginPath(); cx.arc(R, R, R - 8, 0, Math.PI * 2); cx.strokeStyle = "#e5a00d"; cx.lineWidth = 8; cx.stroke();
-		cx.beginPath(); cx.arc(R, R, 46, 0, Math.PI * 2); cx.fillStyle = "#e5a00d"; cx.fill();
-		cx.beginPath(); cx.moveTo(R - 12, R - 18); cx.lineTo(R + 20, R); cx.lineTo(R - 12, R + 18); cx.closePath(); cx.fillStyle = "#1f2125"; cx.fill();
-	}
+/* ---------- state ---------- */
+const S={collections:[],colIds:{},people:[],wl:{},guid:{},mode:'sample',relay:false,live:false,machineId:null,items:[],veto:new Set(),wheel:[],rot:0,spinning:false};
 
-	function pickedIndex() {
-		var n = items.length, seg = Math.PI * 2 / n;
-		var a = ((-Math.PI / 2 - angle) % (Math.PI * 2) + Math.PI * 4) % (Math.PI * 2);
-		return Math.floor(a / seg) % n;
-	}
+function curProfile(){const p=S.people.find(x=>x.id===prefs.profile)||S.people[0];if(!p)return{name:'',available:false,ids:new Set(),person:null};
+  const w=S.wl[p.id];return{name:p.name,available:w instanceof Set,ids:w instanceof Set?w:new Set(),person:p,state:w}}
+const wlOK=()=>!!curProfile().available;
+const onWL=it=>curProfile().ids.has(it.id);
+function wlMessage(){const c=curProfile(),p=c.person;if(!p||c.available)return'';
+  if(p.kind==='guest')return"Guests don't have a Plex watchlist.";
+  if(c.state==='loading')return'Loading watchlist…';
+  if(p.kind==='home'&&!p.token)return`Tap ${p.name} above to unlock their watchlist.`;
+  return"This watchlist couldn't be loaded.";}
+function renderProfiles(){
+  const cur=curProfile().person,i=Math.max(0,S.people.indexOf(cur));
+  $('#pAv').innerHTML=cur?avatar(cur,i):'';$('#pName').textContent=cur?cur.name:'Nobody';
+  $('#pMenu').innerHTML=`<h3>Who's spinning?</h3>`+S.people.map((p,j)=>`<button role="menuitemradio" data-p="${esc(p.id)}" aria-checked="${!!cur&&p.id===cur.id}">${avatar(p,j)}<span class="nm"><b>${esc(p.name)}</b><small>${KIND[p.kind]||''}${p.kind==='home'&&p.protected&&!p.token?' · PIN':''}</small></span></button>`).join('')
+    +`<hr><button class="manage" data-manage="1">Add or manage people</button>`;
+  renderCollections();
+}
+function togglePMenu(open){const m=$('#pMenu'),o=open??m.hidden;m.hidden=!o;$('#pBtn').setAttribute('aria-expanded',o);if(o){const f=m.querySelector('[aria-checked="true"]')||m.querySelector('button');f&&f.focus()}}
+$('#pBtn').onclick=e=>{e.stopPropagation();if(!S.spinning)togglePMenu()};
+document.addEventListener('click',e=>{if(!$('#pMenu').hidden&&!e.target.closest('.pwrap'))togglePMenu(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#pMenu').hidden){togglePMenu(false);$('#pBtn').focus()}});
+$('#pMenu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;togglePMenu(false);
+  if(b.dataset.manage){openSettings();return}
+  prefs.profile=b.dataset.p;save();renderControls();await ensureWatchlist(curProfile().person);renderControls();rebuild()};
+/* collections */
+function curCollection(){return S.collections.find(c=>c.id===prefs.collection)||null}
+function renderCollections(){
+  const w=$('#colWrap'),has=S.collections.length>0;w.hidden=!has;$('#toolbar').classList.toggle('solo',!has);if(!has)return;
+  const c=curCollection();$('#colName').textContent=c?c.title:'All titles';w.classList.toggle('on',!!c);
+}
+function renderColList(){
+  const q=$('#cpSearch').value.trim().toLowerCase(),c=curCollection();
+  const list=S.collections.filter(x=>!q||x.title.toLowerCase().includes(q));
+  const libs=[...new Set(list.map(x=>x.library))];
+  $('#cpList').innerHTML=(q?'':`<button role="menuitemradio" data-c="" aria-checked="${!c}">All titles</button>`)
+    +libs.map(l=>`<h3>${esc(l)}</h3>`+list.filter(x=>x.library===l).map(x=>`<button role="menuitemradio" data-c="${esc(x.id)}" aria-checked="${!!c&&c.id===x.id}">${esc(x.title)}</button>`).join('')).join('')
+    +(list.length||!q?'':`<p class="none">No collections match "${esc(q)}".</p>`);
+}
+function openColPick(){if(S.spinning)return;const m=$('#cpick');$('#cpSearch').value='';$('#cpSearch').hidden=S.collections.length<9;renderColList();m.hidden=false;
+  const sel=$('#cpList [aria-checked="true"]');if(sel){sel.scrollIntoView({block:'center'});sel.focus({preventScroll:true})}}
+function closeColPick(){$('#cpick').hidden=true}
+$('#colWrap').onclick=openColPick;
+$('#cpX').onclick=closeColPick;
+$('#cpick').onclick=e=>{if(e.target.id==='cpick')closeColPick()};
+$('#cpSearch').oninput=renderColList;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#cpick').hidden)closeColPick()});
+$('#cpList').onclick=async e=>{const b=e.target.closest('[data-c]');if(!b)return;closeColPick();
+  prefs.collection=b.dataset.c;const c=curCollection();if(c&&prefs.type!=='both')prefs.type=c.type;save();renderControls();rebuild();
+  await ensureCollection(c);rebuild()};
+async function ensureCollection(c){
+  if(!c||S.colIds[c.id] instanceof Set)return;
+  if(S.mode!=='account')return;
+  S.colIds[c.id]='loading';rebuild();
+  try{const r=await px(`${ACC.server.uri}/library/collections/${c.id}/children`,{token:ACC.server.accessToken,timeout:30000});
+    S.colIds[c.id]=new Set(((r.MediaContainer&&r.MediaContainer.Metadata)||[]).map(m=>m.ratingKey))}
+  catch(e){S.colIds[c.id]='fail';toast(`Couldn't load ${c.title}.`)}
+}
+function pool(){
+  const ex=new Set(prefs.excluded),inc=new Set(prefs.included);
+  return S.items.filter(it=>(!inc.size||it.genres.some(g=>inc.has(g)))&&(prefs.type==='both'||it.type===prefs.type)&&!S.veto.has(it.id)&&!(prefs.unwatched&&it.watched)&&!(prefs.watchlist&&wlOK()&&!onWL(it))&&(!curCollection()||(S.colIds[prefs.collection] instanceof Set&&S.colIds[prefs.collection].has(it.id)))&&!it.genres.some(g=>ex.has(g)));
+}
+function genresForType(){
+  const set=new Set();
+  S.items.forEach(it=>{if(prefs.type==='both'||it.type===prefs.type)it.genres.forEach(g=>set.add(g))});
+  prefs.excluded.forEach(g=>set.add(g));prefs.included.forEach(g=>set.add(g));
+  return [...set].sort((a,b)=>a.localeCompare(b));
+}
 
-	function show(it) { rTitle.textContent = it.t; rMeta.textContent = it.m; }
+/* ---------- sound + haptics ---------- */
+let ac=null;
+function audio(){ if(!prefs.sound)return; try{ac=ac||new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended')ac.resume()}catch(e){} }
+function tone(f=1400,d=.03,type='square',v=.035){
+  if(!prefs.sound||!ac)return;
+  try{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+d+.02)}catch(e){}
+}
+function buzz(ms){ try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){} }
+const SOUND_ON='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8v4h3l4 3V5L6 8H3Z" fill="currentColor"/><path d="M13.5 7a4 4 0 0 1 0 6M15.8 4.8a7 7 0 0 1 0 10.4" stroke-linecap="round"/></svg>';
+const SOUND_OFF='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8v4h3l4 3V5L6 8H3Z" fill="currentColor"/><path d="m13.5 8 4 4m0-4-4 4" stroke-linecap="round"/></svg>';
+function renderSound(){}
 
-	function spin() {
-		if (spinning || !items.length) return;
-		spinning = true; spinBtn.disabled = true; spinBtn.textContent = "Spinning…";
-		var start = angle, delta = Math.PI * 2 * (5 + Math.random() * 3) + Math.random() * Math.PI * 2;
-		var dur = reduce ? 1 : 4200, t0 = performance.now();
-		function step(now) {
-			var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 4);
-			angle = start + delta * e; draw();
-			if (p < 1) { requestAnimationFrame(step); return; }
-			spinning = false; spinBtn.disabled = false; spinBtn.textContent = "Spin again";
-			show(items[pickedIndex()]);
-		}
-		requestAnimationFrame(step);
-	}
+/* ---------- controls ---------- */
+function renderControls(){
+  document.querySelectorAll('#typeSeg button').forEach(b=>b.setAttribute('aria-checked',b.dataset.type===prefs.type));
+  const ex=new Set(prefs.excluded),inc=new Set(prefs.included);
+  $('#chips').innerHTML=genresForType().map(g=>{const st=inc.has(g)?'inc':ex.has(g)?'exc':'';
+    return `<button class="chip ${st}" data-g="${esc(g)}" aria-label="${esc(g)}: ${st==='inc'?'only this genre':st==='exc'?'skipped':'included'}">${esc(g)}</button>`}).join('');
+  const bits=[];if(prefs.included.length)bits.push('Only '+prefs.included.join(', '));if(prefs.excluded.length)bits.push('Skip '+prefs.excluded.join(', '));if(prefs.unwatched)bits.push('Unwatched');if(prefs.watchlist&&wlOK())bits.push('Watchlist');
+  $('#skipped').textContent=bits.join(' · ')||'None';
+  $('#unwatched').checked=!!prefs.unwatched;
+  $('#watchlist').checked=!!prefs.watchlist&&wlOK();$('#watchlist').disabled=!wlOK();const wm=wlMessage();$('#wlNote').textContent=wm;$('#wlNote').hidden=!wm;
+  $('#wlLabel').textContent=S.people.length>1&&curProfile().name?`${curProfile().name}'s watchlist`:'Watchlist only';
+  renderProfiles();
+}
+$('#typeSeg').onclick=e=>{const b=e.target.closest('button');if(!b||S.spinning)return;prefs.type=b.dataset.type;const cc=curCollection();if(cc&&prefs.type!=='both'&&cc.type!==prefs.type)prefs.collection='';save();renderControls();rebuild()};
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b||S.spinning)return;const g=b.dataset.g;
+  if(prefs.included.includes(g)){prefs.included=prefs.included.filter(x=>x!==g);prefs.excluded=[...prefs.excluded,g]}
+  else if(prefs.excluded.includes(g)){prefs.excluded=prefs.excluded.filter(x=>x!==g)}
+  else prefs.included=[...prefs.included,g];
+  save();renderControls();rebuild()};
+$('#unwatched').onchange=e=>{prefs.unwatched=e.target.checked;save();renderControls();rebuild()};
+$('#watchlist').onchange=e=>{prefs.watchlist=e.target.checked;save();renderControls();rebuild()};
+$('#resetBtn').onclick=()=>{if(S.spinning)return;prefs.excluded=[...DEFAULTS.excluded];prefs.included=[];prefs.unwatched=false;prefs.watchlist=false;S.veto.clear();save();renderControls();rebuild()};
+$('#shuffleBtn').onclick=()=>{if(!S.spinning){rebuild();tone(900,.05,'triangle',.05)}};
 
-	document.querySelectorAll(".seg button").forEach(function (b) {
-		b.addEventListener("click", function () {
-			if (spinning) return;
-			filter = b.getAttribute("data-f");
-			document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-			items = list(); draw();
-		});
-	});
-	spinBtn.addEventListener("click", spin);
-	if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
-	draw();
-	show(items[pickedIndex()]);
-	rTitle.textContent = items[pickedIndex()].t;
-	rMeta.textContent = "Under the pointer right now. Spin to roll for real.";
+/* ---------- wheel ---------- */
+function rebuild(){
+  const p=pool(), n=Math.min(12,p.length), pick=[...p];
+  for(let i=pick.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pick[i],pick[j]]=[pick[j],pick[i]]}
+  S.wheel=pick.slice(0,n);
+  $('#poolText').innerHTML=S.colIds[prefs.collection]==='loading'&&curCollection()?`Loading ${esc(curCollection().title)}…`:p.length?`<b>${p.length}</b> ${p.length===1?'title matches':'titles match'} · ${n} on the wheel`:'No titles match. Loosen the filters.';
+  $('#spinBtn').disabled=!n;
+  draw();
+}
+function segColor(i,n){ if(n%6===1&&i===n-1)return PAL[2]; return PAL[i%6]; }
+const SMALL=/^(the|a|an|into|of|and|in|on|at|to|for|with)$/i;
+const words=t=>t.split(/\s+/).filter(Boolean);
+function trimSmall(w){while(w.length&&SMALL.test(w[0]))w=w.slice(1);while(w.length&&SMALL.test(w[w.length-1]))w=w.slice(0,-1);return w}
+function pieces(t,min){const w=words(t),out=[];for(let n=w.length-1;n>=min;n--){const h=trimSmall(w.slice(0,n)),tl=trimSmall(w.slice(w.length-n));if(h.length>=min)out.push(h.join(' '));if(tl.length>=min)out.push(tl.join(' '))}return out}
+function label(ctx,title,max){
+  const fits=t=>!!t&&ctx.measureText(t).width<=max;
+  const t=title.replace(/\s*\([^)]*\)\s*$/,'').trim();
+  if(fits(t))return t;
+  const noArt=x=>x.replace(/^(the|a|an)\s+/i,'');
+  let main=t,sub=null;
+  const parts=t.split(/\s*:\s+|\s+[-–]\s+/);
+  if(parts.length>1){main=parts[0];let b=parts[parts.length-1];
+    const generic=/^(a|an)\s.*\b(mystery|story|tale|movie|film|adventure|odyssey|musical)$/i.test(b)||/^(part|chapter|vol\.?|volume|book|the movie)\b/i.test(b);
+    if(!generic)sub=b}
+  else{const m=t.match(/^(.{2,30}?) and the (.+)$/i);if(m){main=m[1];sub=m[2]}}
+  const tries=[];
+  if(sub){const longest=[...trimSmall(words(sub))].sort((x,y)=>y.length-x.length)[0];tries.push(sub,noArt(sub),...pieces(sub,2),longest)}
+  tries.push(main,noArt(main));
+  if(!sub&&words(noArt(main)).length>=5)tries.push(words(noArt(main)).map(x=>x[0]).join('').toUpperCase());
+  tries.push(...pieces(main,2),[...trimSmall(words(main))].sort((x,y)=>y.length-x.length)[0]);
+  for(const c of tries)if(fits(c))return c;
+  return fit(ctx,noArt(t),max);
+}
+function fit(ctx,text,max){ if(ctx.measureText(text).width<=max)return text; let t=text; while(t.length>1&&ctx.measureText(t+'…').width>max)t=t.slice(0,-1); return t.trimEnd()+'…'; }
+function draw(){
+  const cv=$('#wheel'), s=cv.clientWidth; if(!s)return;
+  const dpr=window.devicePixelRatio||1, px=Math.round(s*dpr);
+  if(cv.width!==px){cv.width=cv.height=px}
+  const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,s,s);
+  const c=s/2, R=c-8, n=S.wheel.length;
+  ctx.save(); ctx.translate(c,c);
+  ctx.beginPath(); ctx.arc(0,0,R+6,0,TAU); ctx.fillStyle='#2C2C2C'; ctx.fill();
+  if(!n){
+    ctx.beginPath(); ctx.arc(0,0,R,0,TAU); ctx.fillStyle='#252525'; ctx.fill();
+    ctx.setLineDash([6,8]); ctx.strokeStyle='#3C3C3C'; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); return;
+  }
+  ctx.rotate(S.rot-Math.PI/2);
+  const a=TAU/n, fs=Math.round((n<=6?17:n<=9?15:13.5)*Math.min(1.15,s/380));
+  ctx.font=`700 ${fs}px "Bricolage Grotesque", Figtree, system-ui, sans-serif`;
+  for(let i=0;i<n;i++){
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,R,i*a,(i+1)*a); ctx.closePath();
+    ctx.fillStyle=segColor(i,n); ctx.fill();
+    ctx.strokeStyle='#1B1B1B'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.save(); ctx.rotate(i*a+a/2); ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.fillStyle='#161616';
+    const full=S.wheel[i].title.replace(/\s*\([^)]*\)\s*$/,'').trim();
+    if(ctx.measureText(full).width>R*.6){ctx.font=`700 ${Math.round(fs*.84)}px "Bricolage Grotesque", Figtree, system-ui, sans-serif`;
+      if(ctx.measureText(full).width>R*.6)ctx.font=`700 ${fs}px "Bricolage Grotesque", Figtree, system-ui, sans-serif`}
+    ctx.fillText(label(ctx,S.wheel[i].title,R*.6),R-16,0);
+    ctx.font=`700 ${fs}px "Bricolage Grotesque", Figtree, system-ui, sans-serif`; ctx.restore();
+  }
+  for(let i=0;i<n;i++){ const ang=i*a; ctx.beginPath(); ctx.arc(Math.cos(ang)*(R+1),Math.sin(ang)*(R+1),3.2,0,TAU); ctx.fillStyle='#E5A00D'; ctx.fill(); }
+  const g=ctx.createRadialGradient(0,0,R*.18,0,0,R);
+  g.addColorStop(0,'rgba(255,255,255,.22)'); g.addColorStop(.55,'rgba(255,255,255,0)'); g.addColorStop(1,'rgba(20,20,20,.22)');
+  ctx.beginPath(); ctx.arc(0,0,R,0,TAU); ctx.fillStyle=g; ctx.fill();
+  ctx.restore();
+}
+const idxAt=rot=>{const n=S.wheel.length;return Math.floor(mod(-rot,TAU)/(TAU/n))%n};
+function spin(){
+  if(S.spinning||!S.wheel.length)return;
+  audio(); closeSheet();
+  const n=S.wheel.length, a=TAU/n, w=Math.floor(Math.random()*n);
+  const target=w*a+a*(.18+.64*Math.random());
+  const base=S.rot+TAU*(reduced?1:5+Math.floor(Math.random()*2));
+  const from=S.rot, to=base+mod(-target-base,TAU), dur=reduced?900:4600+Math.random()*1000, t0=performance.now();
+  let last=idxAt(from); S.spinning=true; $('#spinBtn').disabled=true;
+  const f=now=>{
+    const t=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-t,4);
+    S.rot=from+(to-from)*e; draw();
+    const i=idxAt(S.rot);
+    if(i!==last){last=i;tone(1500,.025);buzz(4);ptrHit((to-from)*4*Math.pow(1-t,3)/dur)}
+    if(t<1)requestAnimationFrame(f);
+    else{S.rot=mod(S.rot,TAU);S.spinning=false;$('#spinBtn').disabled=false;tone(660,.12,'triangle',.06);setTimeout(()=>tone(990,.2,'triangle',.06),110);buzz([20,40,30]);showResult(S.wheel[w])}
+  };
+  requestAnimationFrame(f);
+}
+const PTR={a:0,v:0,run:false};
+function ptrHit(speed){if(reduced)return;
+  const kick=clamp(16+speed*1100,16,34);PTR.a=Math.min(PTR.a,-kick);PTR.v=Math.min(PTR.v,0);ptrLoop()}
+function ptrLoop(){if(PTR.run)return;PTR.run=true;const el=$('#pointer');let last=performance.now();
+  const f=now=>{const dt=Math.min(.034,(now-last)/1000);last=now;
+    PTR.v+=(-420*PTR.a-15*PTR.v)*dt;PTR.a+=PTR.v*dt;el.style.transform=`rotate(${PTR.a.toFixed(2)}deg)`;
+    if(Math.abs(PTR.a)<.08&&Math.abs(PTR.v)<.8){PTR.a=0;PTR.v=0;el.style.transform='';PTR.run=false;return}
+    requestAnimationFrame(f)};
+  requestAnimationFrame(f)}
+$('#spinBtn').onclick=spin;
+addEventListener('resize',()=>draw());
+
+/* ---------- result ---------- */
+function hash(s){let h=0;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)}
+const thumbUrl=it=>{if(!it.thumb)return null;
+  if(S.mode==='account'&&ACC&&ACC.server&&ACC.server.uri)return`${ACC.server.uri}/photo/:/transcode?width=600&height=900&minSize=1&upscale=1&url=${encodeURIComponent(it.thumb)}&X-Plex-Token=${encodeURIComponent(ACC.server.accessToken)}`;
+  if(S.mode==='nas')return'api/thumb?path='+encodeURIComponent(it.thumb);return null};
+function fmtMin(m){if(!m)return'';const h=Math.floor(m/60),r=m%60;return h?`${h}h ${r}m`:`${r}m`}
+function posterColors(it){const h=hash(it.title),c1=PAL[h%6],c2=PAL[(h>>3)%6===h%6?(h%6+2)%6:(h>>3)%6];return[c1,c2]}
+function posterHTML(it){const url=thumbUrl(it);
+  if(url)return`<img src="${esc(url)}" alt="Poster for ${esc(it.title)}">`;
+  const h=hash(it.title),[c1,c2]=posterColors(it),rnd=k=>((h>>k)&255)/255;
+  const ridge=(base,amp,k)=>{let pts=[];for(let i=0;i<=6;i++)pts.push(`${i*100/6}% ${(base-amp*Math.abs(Math.sin(i*1.3+rnd(k)*6))).toFixed(1)}%`);return`polygon(0 100%,${pts.join(',')},100% 100%)`};
+  return`<div class="gp" style="background:linear-gradient(175deg,${c1} 0%,${c2} 58%,#121212 100%)">
+    <i class="sun" style="left:${22+rnd(2)*56}%;top:${44+rnd(5)*10}%"></i>
+    <i class="hill" style="background:rgba(10,10,10,.38);clip-path:${ridge(70,14,7)}"></i>
+    <i class="hill" style="background:rgba(10,10,10,.72);clip-path:${ridge(82,10,11)}"></i>
+    <i class="grain"></i>
+    <b class="t">${esc(it.title)}</b>
+    <span class="k">${it.type==='movie'?'A Feature':'The Series'}${it.year?' · '+it.year:''}</span>
+    <i class="bill"></i></div>`}
+function showResult(it,opts={}){
+  const url=thumbUrl(it),[c1,c2]=posterColors(it);
+  $('#poster').innerHTML=posterHTML(it);
+  $('#sheetBg').style.backgroundImage=url?`url("${url}")`:`linear-gradient(160deg,${c1},${c2})`;
+  $('#stamp').hidden=!opts.final;
+  const cb=$('#rChallenge');if(opts.final){cb.setAttribute('aria-disabled','true');$('#rChallengeTxt').textContent='The court has spoken'}else{cb.removeAttribute('aria-disabled');$('#rChallengeTxt').textContent='Challenge this pick'}
+  $('#rEyebrow').textContent=`${it.type==='movie'?'Movie':'TV series'}${it.year?' · '+it.year:''}`;
+  $('#rTitle').textContent=it.title;
+  const facts=[it.contentRating,it.type==='movie'?fmtMin(it.minutes):(it.seasons?`${it.seasons} season${it.seasons>1?'s':''}`:''),it.rating?`★ ${(+it.rating).toFixed(1)}`:'',it.inProgress?'In progress':(it.watched?'Watched':''),onWL(it)?'On watchlist':''].filter(Boolean);
+  $('#rFacts').textContent=facts.join(' · ');
+  $('#rTags').innerHTML=it.genres.slice(0,4).map(g=>`<span>${esc(g)}</span>`).join('');
+  const sm=$('#rSummary');sm.textContent=it.summary||'';sm.hidden=!it.summary;sm.classList.remove('open');$('#rMore').textContent='More';
+  const open=$('#rOpen');
+  if(S.live&&S.machineId){open.href=`https://app.plex.tv/desktop/#!/server/${S.machineId}/details?key=${encodeURIComponent('/library/metadata/'+it.id)}`;open.removeAttribute('aria-disabled');$('#rNote').hidden=true}
+  else{open.removeAttribute('href');open.setAttribute('aria-disabled','true');$('#rNote').hidden=false}
+  S.current=it;if(S.live)watchUrl(it);
+  $('#scrim').hidden=false;$('#sheet').hidden=false;$('#sheet').scrollTop=0;
+  requestAnimationFrame(()=>{$('#rMore').hidden=!it.summary||sm.scrollHeight<=sm.clientHeight+2});
+}
+function closeSheet(){$('#scrim').hidden=true;$('#sheet').hidden=true}
+async function watchUrl(it){
+  const m=/^plex:\/\/(movie|show)\/(\w+)/.exec(it.guid||'');if(!m)return null;
+  if(!it.slug){try{
+    if(S.mode==='account'){const r=await px(`https://metadata.provider.plex.tv/library/metadata/${m[2]}`,{token:ACC.token,timeout:6000});it.slug=((r.MediaContainer||{}).Metadata||[])[0].slug||''}
+    else if(S.mode==='nas'){const r=await fetch('api/slug?guid='+encodeURIComponent(it.guid));if(r.ok)it.slug=(await r.json()).slug||''}
+  }catch(e){}}
+  return it.slug?`https://watch.plex.tv/${m[1]}/${it.slug}`:null}
+async function openInPlex(e){const a=$('#rOpen'),it=S.current;if(!a.getAttribute('href')||!it)return;
+  e.preventDefault();e.stopPropagation();
+  const key=encodeURIComponent('/library/metadata/'+it.id),pre=`plex://preplay/?metadataKey=${key}&server=${S.machineId}`,web=a.href;
+  const watch=await watchUrl(it);
+  if(NATIVE){const L=PLUG('AppLauncher');
+    try{if(L&&(await L.canOpenUrl({url:'com.plexapp.android'})).value){await L.openUrl({url:watch||pre});return}}catch(_){}
+    if(PLUG('Browser'))PLUG('Browser').open({url:web});return}
+  if(/Android/i.test(navigator.userAgent)){const fb=encodeURIComponent(web);
+    location.href=watch?`intent://${watch.slice(8)}#Intent;scheme=https;package=com.plexapp.android;S.browser_fallback_url=${fb};end`
+      :`intent://${pre.slice(7)}#Intent;scheme=plex;package=com.plexapp.android;S.browser_fallback_url=${fb};end`;return}
+  window.open(web,'_blank','noopener')}
+$('#rOpen').addEventListener('click',openInPlex);
+$('#rMore').onclick=()=>{const sm=$('#rSummary'),o=sm.classList.toggle('open');$('#rMore').textContent=o?'Less':'More'};
+$('#scrim').onclick=closeSheet;$('#sheetX').onclick=closeSheet;
+$('#rAgain').onclick=()=>{closeSheet();spin()};
+$('#rVeto').onclick=()=>{if(S.current)S.veto.add(S.current.id);closeSheet();rebuild();setTimeout(spin,250)};
+
+/* ---------- challenge ---------- */
+const A={scores:[0,0],timers:[],raf:0,onTap:null,done:false,last:null,cleanup:null};
+const name=p=>prefs.names[p]||(p?'Player 2':'Player 1');
+const personByName=n=>S.people.find(x=>x.name===n);
+const later=(fn,ms)=>A.timers.push(setTimeout(fn,ms));
+function setHalf(p,html,cls=''){const h=$('#half'+p);h.className=`half p${p} ${cls}`;h.innerHTML=html}
+function renderScores(){[0,1].forEach(p=>{$('#nm'+p).textContent=name(p);$('#sc'+p).textContent=A.scores[p]})}
+function stopGame(){closeFloat();A.timers.forEach(clearTimeout);A.timers=[];cancelAnimationFrame(A.raf);A.onTap=null;A.onClick=null;if(A.cleanup){A.cleanup();A.cleanup=null}
+  $('#hockey').hidden=true;$('#arena').classList.remove('hockey')}
+function openArena(menu=true){audio();closeSheet();$('#arena').hidden=false;document.body.classList.add('lock');renderScores();idleHalves();if(menu)showMenu();
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>A.lock=l).catch(()=>{})}catch(e){}}
+function closeArena(){stopGame();$('#arena').hidden=true;document.body.classList.remove('lock');try{A.lock&&A.lock.release()}catch(e){}}
+function idleHalves(){[0,1].forEach(p=>setHalf(p,`<p class="who">${esc(name(p))}</p><p class="big">Ready?</p><p class="hint">This half is yours</p>`))}
+['half0','half1'].forEach((id,p)=>{$('#'+id).addEventListener('pointerdown',e=>{if(A.onTap){e.preventDefault();A.onTap(p)}});
+  $('#'+id).addEventListener('click',e=>{if(A.onClick)A.onClick(p,e.target)})});
+
+const ICON={
+  balloon:'<svg viewBox="0 0 20 20" fill="currentColor"><ellipse cx="10" cy="8" rx="5.5" ry="6.5"/><path d="M10 14.5v4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>',
+  draw:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="11" r="6.5"/><path d="M10 11V7.5M8 2.5h4"/></svg>',
+  hockey:'<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="7" cy="13" r="4.5"/><circle cx="14.5" cy="6" r="2.5"/></svg>',
+  dos:'<svg viewBox="0 0 20 20" fill="currentColor"><rect x="2.5" y="4" width="8" height="12" rx="1.8" transform="rotate(-12 6.5 10)"/><rect x="9.5" y="3.5" width="8" height="12" rx="1.8" transform="rotate(10 13.5 9.5)" opacity=".6"/></svg>',
+  pong:'<svg viewBox="0 0 20 20" fill="currentColor"><rect x="5" y="2.5" width="10" height="2.6" rx="1.3"/><rect x="5" y="14.9" width="10" height="2.6" rx="1.3"/><circle cx="11.5" cy="10" r="2.2"/></svg>',
+  clash:'<svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4h6v2.2H7.4V16H4.6V6.2H3zM11 4h6v2.2h-1.6V16h-2.8V6.2H11z"/></svg>',
+  dice:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="14" height="14" rx="3.5"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/><circle cx="12.5" cy="12.5" r="1" fill="currentColor"/><circle cx="12.5" cy="7.5" r="1" fill="currentColor"/><circle cx="7.5" cy="12.5" r="1" fill="currentColor"/></svg>'
+};
+const GAMES={
+  balloon:{name:'Balloon Pop',desc:'Mash your half. First balloon to pop wins.',color:'var(--coral)',icon:ICON.balloon,start:balloonGame},
+  draw:{name:'Quick Draw',desc:'Wait for green, then tap. Jump early and you lose.',color:'var(--mint)',icon:ICON.draw,start:drawGame},
+  hockey:{name:'Air Hockey',desc:'Drag your paddle. Best 2 out of 3 goals.',color:'var(--sky)',icon:ICON.hockey,start:hockeyGame},
+  dos:{name:'Dos',desc:'Three cards each. Match color or number. Two draws in a row and the next one always plays.',color:'var(--violet)',icon:ICON.dos,start:dosGame},
+  pong:{name:'Pong',desc:'Slide your paddle and keep the ball out of your end. First to 3.',color:'var(--rose)',icon:ICON.pong,start:pongGame},
+  clash:{name:'Color Clash',desc:'Tap only when the word matches its color. First to 3.',color:'var(--amber)',icon:ICON.clash,start:clashGame},
+};
+function playerBtn(p){const n=name(p),pr=personByName(n),i=pr?S.people.indexOf(pr):p;
+  return`<div class="pl"><span><i style="background:var(--p${p})"></i>${p?'Top':'Bottom'}</span><button type="button" class="plbtn" data-player="${p}" aria-haspopup="true">${avatar(pr||{name:n},i)}<b>${esc(n)}</b><svg class="chev-s" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg></button></div>`}
+function showMenu(){
+  const pn=$('#panel');pn.hidden=false;
+  pn.innerHTML=`<div class="card chal">
+    <div class="chal-head"><div><h2>Challenge</h2><p>Lay the phone flat between you. Each person plays their own half.</p></div>
+      <div class="players" id="players">${playerBtn(0)}${playerBtn(1)}</div></div>
+    <div class="chal-games"><div class="games">
+      ${Object.entries(GAMES).map(([k,g])=>`<button class="game" data-g="${k}"><span class="gi" style="background:${g.color}">${g.icon}</span><b>${g.name}</b><small>${g.desc}</small></button>`).join('')}
+    </div></div>
+    <div class="chal-foot"><button class="btn" data-act="back">Back to the wheel</button><button class="btn primary" data-g="random">${ICON.dice} Surprise us</button></div>
+  </div>`;
+}
+/* player picker */
+let FM=null;
+function closeFloat(){if(FM){FM.remove();FM=null}}
+function openFloat(anchor,html,onPick){
+  closeFloat();const m=document.createElement('div');m.className='pmenu floating';m.setAttribute('role','menu');m.innerHTML=html;document.body.append(m);FM=m;
+  const r=anchor.getBoundingClientRect(),w=Math.max(r.width,240);m.style.width=w+'px';
+  const left=clamp(r.left,12,innerWidth-w-12),below=innerHeight-r.bottom-12,above=r.top-12,h=m.offsetHeight;
+  m.style.left=left+'px';m.style.top=(h<=below||below>=above?r.bottom+6:Math.max(12,r.top-6-Math.min(h,above)))+'px';
+  m.style.maxHeight=Math.max(below,above)-6+'px';
+  m.addEventListener('click',e=>{e.stopPropagation();onPick(e,m)});
+  const f=m.querySelector('[aria-checked="true"]')||m.querySelector('button');f&&f.focus();
+}
+document.addEventListener('pointerdown',e=>{if(FM&&!FM.contains(e.target)&&!e.target.closest('[data-player]'))closeFloat()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFloat()});
+function setPlayer(p,n){n=(n||'').trim().slice(0,14);if(!n)return;
+  if(name(1-p)===n)prefs.names[1-p]=name(p);prefs.names[p]=n;save();renderScores();
+  const box=$('#players');if(box)box.innerHTML=playerBtn(0)+playerBtn(1)}
+function openPlayerMenu(btn){const p=+btn.dataset.player,cur=name(p);
+  const html=`<h3>${p?'Top':'Bottom'} player</h3>`+S.people.map((x,i)=>`<button role="menuitemradio" data-n="${esc(x.name)}" aria-checked="${x.name===cur}">${avatar(x,i)}<span class="nm"><b>${esc(x.name)}</b><small>${KIND[x.kind]||''}${name(1-p)===x.name?' · other side':''}</small></span></button>`).join('')
+    +`${S.people.length?'<hr>':''}<form class="typein"><input maxlength="14" placeholder="Someone else" aria-label="Type a name"><button type="submit">Use</button></form>`;
+  openFloat(btn,html,(e,m)=>{const b=e.target.closest('[data-n]');if(b){setPlayer(p,b.dataset.n);closeFloat()}});
+  const form=FM.querySelector('form');form.onsubmit=e=>{e.preventDefault();const v=form.querySelector('input').value;if(v.trim()){setPlayer(p,v);closeFloat()}};
+}
+$('#panel').addEventListener('click',e=>{
+  const pb=e.target.closest('[data-player]');if(pb){e.stopPropagation();if(FM)closeFloat();else openPlayerMenu(pb);return}
+  const g=e.target.closest('[data-g]'), act=e.target.closest('[data-act]');
+  if(g){let k=g.dataset.g;if(k==='random'){const ks=Object.keys(GAMES);k=ks[Math.floor(Math.random()*ks.length)]}play(k)}
+  else if(e.target.closest('[data-obj]')){A.court.objector=+e.target.closest('[data-obj]').dataset.obj;showStakes()}
+  else if(act){const a=act.dataset.act;
+    if(a==='trial'){const ks=Object.keys(GAMES);play(ks[Math.floor(Math.random()*ks.length)])}
+    if(a==='drop'){const it=A.court.item;A.court=null;closeArena();showResult(it)}
+    if(a==='v-spin'){const it=A.court.item;A.court=null;closeArena();S.veto.add(it.id);rebuild();setTimeout(spin,250)}
+    if(a==='v-keep'){const it=A.court.item;A.court=null;closeArena();showResult(it,{final:true})}
+    if(a==='back')closeArena();
+    if(a==='again')play(A.last);
+    if(a==='menu'){idleHalves();showMenu()}
+    if(a==='spin'){closeArena();setTimeout(spin,200)}
+    if(a==='resetScore'){A.scores=[0,0];renderScores();showMenu()}
+  }
+});
+$('#exitBtn').onclick=()=>{stopGame();idleHalves();if(A.court)showCourtPick();else showMenu()};
+function play(k){
+  stopGame();A.last=k;A.done=false;$('#panel').hidden=true;
+  if(k==='hockey'||k==='pong'){GAMES[k].start();return}
+  let n=3;const step=()=>{if(!n){GAMES[k].start();return}
+    [0,1].forEach(p=>setHalf(p,`<p class="who">${esc(name(p))}${A.court?(p===A.court.objector?' · objecting':' · defending'):''}</p><div class="count">${n}</div><p class="hint">${GAMES[k].name}</p>`));tone(520,.08,'triangle',.05);n--;later(step,700)};
+  step();
+}
+function finish(w,note){
+  if(A.done)return;A.done=true;A.onTap=null;A.onClick=null;if(A.cleanup){A.cleanup();A.cleanup=null}A.scores[w]++;renderScores();
+  tone(523,.12,'triangle',.07);later(()=>tone(659,.12,'triangle',.07),120);later(()=>tone(784,.25,'triangle',.07),240);buzz([30,50,60]);
+  setHalf(w,`<p class="who">${esc(name(w))}</p><p class="big" style="color:var(--amber)">You win!</p><p class="hint">${esc(note)}</p>`,'win');
+  setHalf(1-w,`<p class="who">${esc(name(1-w))}</p><p class="big">So close</p><p class="hint">${esc(note)}</p>`);
+  later(()=>{stopGame();const pn=$('#panel');pn.hidden=false;
+    if(A.court){showVerdict(w);return}
+    pn.innerHTML=`<div class="card" style="text-align:center">
+      <p class="eyebrow">${GAMES[A.last].name}</p>
+      <p class="winline">${esc(name(w))} wins</p>
+      <div class="tally"><span><i style="width:10px;height:10px;border-radius:50%;background:var(--p0)"></i>${esc(name(0))} <b>${A.scores[0]}</b></span><span><i style="width:10px;height:10px;border-radius:50%;background:var(--p1)"></i>${esc(name(1))} <b>${A.scores[1]}</b></span></div>
+      <p>Winner's call: spin the wheel, or demand a rematch.</p>
+      <button class="btn primary" data-act="spin">${esc(name(w))} spins the wheel</button>
+      <div class="actions" style="margin:0"><button class="btn" data-act="again">Rematch</button><button class="btn" data-act="menu">Other games</button></div>
+      <button class="textbtn" data-act="resetScore">Reset score</button>
+    </div>`},1500);
+}
+
+const DCOL=[['#FF6B57','Red'],['#FFB43F','Yellow'],['#2ED3A0','Green'],['#4C9DFF','Blue']];
+function dosGame(){
+  const deal=()=>Math.random()<.14?{c:Math.floor(Math.random()*4),n:'skip'}:{c:Math.floor(Math.random()*4),n:1+Math.floor(Math.random()*5)};
+  const hands=[[deal(),deal(),deal()],[deal(),deal(),deal()]];let pile=deal();while(pile.n==='skip')pile=deal();
+  let turn=Math.random()<.5?0:1,drew=false,flash=-1,streak=0,lucky=-1;
+  const fits=c=>c.c===pile.c||c.n===pile.n;
+  const luckyCard=()=>Math.random()<.5?{c:pile.c,n:1+Math.floor(Math.random()*5)}:{c:Math.floor(Math.random()*4),n:pile.n==='skip'?'skip':pile.n};
+  const face=c=>c.n==='skip'?'⊘':c.n;
+  const card=(c,extra='',attrs='')=>`<div class="dcard ${extra}" style="background:${DCOL[c.c][0]}" aria-label="${DCOL[c.c][1]} ${c.n==='skip'?'skip':c.n}" ${attrs}>${face(c)}</div>`;
+  function render(){[0,1].forEach(p=>{
+    const mine=turn===p,h=hands[p];
+    setHalf(p,`<p class="who">${esc(name(p))} · ${h.length} card${h.length===1?'':'s'}</p>
+      <div class="dos ${mine?'':'wait'}">
+        ${flash===p?'<div class="dosflash">DOS!</div>':`<p class="turn">${mine?(lucky===p?'Lucky draw! Play it':drew?'Play it or pass':'Your turn'):'Their turn'}</p>`}
+        <div class="pile">On the pile ${card(pile,'sm')}</div>
+        <div class="hand">${h.map((c,i)=>card(c,mine?(fits(c)?'ok':'no'):'',`data-i="${i}" role="button" tabindex="0"`)).join('')}</div>
+        <div class="row">${mine?(lucky===p?'':drew?'<button class="btn" data-dos="pass">Pass</button>':h.length<8?'<button class="btn" data-dos="draw">Draw a card</button>':'<button class="btn" data-dos="pass">Pass</button>'):''}</div>
+      </div>`,mine?'':'wait')})}
+  A.onClick=(p,t)=>{if(A.done||p!==turn)return;
+    const act=t.closest('[data-dos]'),ci=t.closest('[data-i]');
+    if(act){if(act.dataset.dos==='draw'){const forced=streak>=2;hands[p].push(forced?luckyCard():deal());streak++;drew=true;lucky=forced?p:-1;tone(forced?660:330,.05,'triangle',.05);
+        if(!hands[p].some(fits)){render();later(()=>{if(turn===p&&!A.done){drew=false;turn=1-p;render()}},700);return}}
+      else{drew=false;lucky=-1;turn=1-p;tone(260,.05,'triangle',.04)}
+      render();return}
+    if(!ci)return;const i=+ci.dataset.i,c=hands[p][i];
+    if(!fits(c)){buzz(30);tone(140,.08,'square',.05);return}
+    hands[p].splice(i,1);pile=c;drew=false;streak=0;lucky=-1;tone(700,.05,'triangle',.06);buzz(8);
+    if(!hands[p].length){render();finish(p,'Out of cards');return}
+    if(hands[p].length===1){flash=p;later(()=>{flash=-1;render()},900);tone(990,.12,'triangle',.06)}
+    if(c.n!=='skip')turn=1-p;
+    render()};
+  render();
+}
+function pongGame(){
+  const cv=$('#hockey');cv.hidden=false;$('#arena').classList.add('hockey');
+  [0,1].forEach(p=>setHalf(p,''));
+  const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const bx=cv.getBoundingClientRect(),W=bx.width,H=bx.height;cv.width=W*dpr;cv.height=H*dpr;
+  const PW=W*.3,PH=14,EDGE=Math.max(34,H*.06),r=Math.max(8,W*.026),WIN=3,COL=['#FF6B57','#4C9DFF'];
+  const pads=[{x:W/2,y:H-EDGE},{x:W/2,y:EDGE}],pts=[0,0],own={},ball={x:W/2,y:H/2,vx:0,vy:0};
+  let pause=900,flash=-2,last=performance.now(),speed=0;
+  const pos=e=>{const q=cv.getBoundingClientRect();return{x:e.clientX-q.left,y:e.clientY-q.top}};
+  const setX=(p,x)=>{pads[p].x=clamp(x,PW/2+6,W-PW/2-6)};
+  const down=e=>{e.preventDefault();const q=pos(e),p=q.y>H/2?0:1;if(Object.values(own).includes(p))return;own[e.pointerId]=p;try{cv.setPointerCapture(e.pointerId)}catch(_){}setX(p,q.x)};
+  const move=e=>{const p=own[e.pointerId];if(p===undefined)return;e.preventDefault();setX(p,pos(e).x)};
+  const up=e=>{delete own[e.pointerId]};
+  cv.addEventListener('pointerdown',down);cv.addEventListener('pointermove',move);cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  A.cleanup=()=>{cv.removeEventListener('pointerdown',down);cv.removeEventListener('pointermove',move);cv.removeEventListener('pointerup',up);cv.removeEventListener('pointercancel',up)};
+  const serve=to=>{speed=H*.0075;const a=(Math.random()-.5)*.9;ball.x=W/2;ball.y=H/2;ball.vx=Math.sin(a)*speed;ball.vy=Math.cos(a)*speed*(to===0?1:-1)};
+  serve(Math.random()<.5?0:1);
+  function render(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle='#202020';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#3C3C3C';ctx.lineWidth=2;ctx.strokeRect(4,4,W-8,H-8);
+    ctx.setLineDash([8,10]);ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    [0,1].forEach(p=>{ctx.save();ctx.translate(W/2,p?H*.25:H*.75);if(p)ctx.rotate(Math.PI);
+      ctx.fillStyle='rgba(242,242,242,.07)';ctx.font=`800 ${Math.round(H*.16)}px "Bricolage Grotesque", sans-serif`;ctx.fillText(pts[p],0,0);
+      ctx.fillStyle='rgba(242,242,242,.45)';ctx.font='700 13px Figtree, sans-serif';ctx.fillText(`${name(p).toUpperCase()} · FIRST TO ${WIN}`,0,-H*.15);
+      if(flash===p||flash===1-p){ctx.fillStyle=flash===p?'#FFB43F':'rgba(242,242,242,.8)';ctx.font=`800 ${Math.round(W*.12)}px "Bricolage Grotesque", sans-serif`;ctx.fillText(flash===p?'POINT!':'Missed it',0,-H*.04)}
+      if(flash===-2){ctx.fillStyle='rgba(242,242,242,.8)';ctx.font=`800 ${Math.round(W*.08)}px "Bricolage Grotesque", sans-serif`;ctx.fillText('Slide your paddle',0,-H*.04)}
+      ctx.restore()});
+    pads.forEach((P,p)=>{ctx.fillStyle=COL[p];ctx.beginPath();ctx.roundRect?ctx.roundRect(P.x-PW/2,P.y-PH/2,PW,PH,PH/2):ctx.rect(P.x-PW/2,P.y-PH/2,PW,PH);ctx.fill()});
+    ctx.beginPath();ctx.arc(ball.x,ball.y,r,0,TAU);ctx.fillStyle='#F2F2F2';ctx.fill();
+  }
+  function frame(now){
+    const dt=Math.min(3,(now-last)/16.67);last=now;let scored=-1;
+    if(pause>0){pause-=dt*16.67;if(pause<=0)flash=-1}
+    else{
+      const steps=4,k=dt/steps;
+      for(let s=0;s<steps&&scored<0;s++){
+        ball.x+=ball.vx*k;ball.y+=ball.vy*k;
+        if(ball.x<r+4){ball.x=r+4;ball.vx=Math.abs(ball.vx);tone(260,.02,'sine',.04)}
+        if(ball.x>W-r-4){ball.x=W-r-4;ball.vx=-Math.abs(ball.vx);tone(260,.02,'sine',.04)}
+        [0,1].forEach(p=>{const P=pads[p],dir=p===0?1:-1,face=P.y-dir*PH/2;
+          if(ball.vy*dir>0&&Math.abs(ball.y-face)<=r&&Math.abs(ball.x-P.x)<=PW/2+r){
+            const off=clamp((ball.x-P.x)/(PW/2),-1,1);speed=Math.min(speed*1.07,H*.02);
+            ball.vx=off*speed*.75;ball.vy=-dir*Math.sqrt(Math.max(speed*speed-ball.vx*ball.vx,speed*speed*.3));ball.y=face-dir*r;
+            tone(520+p*80,.04,'square',.05);buzz(6)}});
+        if(ball.y>H+r){scored=1;break}
+        if(ball.y<-r){scored=0;break}
+      }
+    }
+    if(scored>=0){pts[scored]++;tone(784,.15,'triangle',.07);buzz(40);
+      if(pts[scored]>=WIN){render();finish(scored,`${pts[scored]}–${pts[1-scored]}`);return}
+      flash=scored;pause=1000;serve(1-scored)}
+    render();A.raf=requestAnimationFrame(frame);
+  }
+  render();A.raf=requestAnimationFrame(frame);
+}
+function clashGame(){
+  const C=[['RED','#FF6B57'],['BLUE','#4C9DFF'],['GREEN','#2ED3A0'],['YELLOW','#FFB43F'],['PURPLE','#9A7CFF']],WIN=3,pts=[0,0];
+  let word=null,match=false,live=false,msg=['',''];
+  const pips=p=>`<div class="pips">${Array.from({length:WIN},(_,i)=>`<i class="${i<pts[p]?'on':''}"></i>`).join('')}</div>`;
+  const render=()=>[0,1].forEach(p=>setHalf(p,`<p class="who">${esc(name(p))}</p>${pips(p)}<div class="clash" style="color:${word?word[1]:'transparent'}">${word?word[0]:'·'}</div><p class="hint">${msg[p]||'Tap only if the word matches its color'}</p>`));
+  function round(){if(A.done)return;msg=['',''];word=null;live=false;render();
+    later(()=>{if(A.done)return;const w=C[Math.floor(Math.random()*C.length)];match=Math.random()<.4;
+      const col=match?w[1]:C.filter(x=>x!==w)[Math.floor(Math.random()*(C.length-1))][1];word=[w[0],col];live=true;render();
+      later(()=>{if(live&&!A.done){live=false;round()}},1500)},450+Math.random()*500)}
+  A.onTap=p=>{if(!live)return;live=false;
+    const scorer=match?p:1-p;pts[scorer]++;
+    msg[p]=match?'Point!':'Gotcha. Wrong one!';msg[1-p]=match?'Too slow':'Point to you!';
+    tone(match?880:180,.1,match?'triangle':'square',.06);buzz(match?15:40);render();
+    if(pts[scorer]>=WIN){later(()=>finish(scorer,`${pts[scorer]}–${pts[1-scorer]}`),500);return}
+    later(round,900)};
+  round();
+}
+function balloonGame(){
+  const T=30,c=[0,0];
+  [0,1].forEach(p=>setHalf(p,`<p class="who">${esc(name(p))}</p><div class="bwrap"><div class="balloon b${p}" id="bal${p}"></div><div class="string"></div></div><div class="bar"><i id="bar${p}"></i></div><p class="hint">Tap anywhere on your half!</p>`));
+  A.onTap=p=>{c[p]++;const k=c[p]/T,b=$('#bal'+p);b.style.transform=`scale(${.3+.7*k})`;$('#bar'+p).style.width=Math.min(100,k*100)+'%';tone(300+k*700,.03,'sine',.05);
+    if(c[p]>=T){b.classList.add('pop');tone(120,.15,'sawtooth',.08);finish(p,`Popped it in ${T} taps`)}};
+}
+function drawGame(){
+  A.go=false;
+  [0,1].forEach(p=>setHalf(p,`<p class="who">${esc(name(p))}</p><p class="big">Wait for it…</p><p class="hint">Tap the moment this turns green</p>`,'wait'));
+  later(()=>{A.go=true;A.t0=performance.now();[0,1].forEach(p=>setHalf(p,`<p class="big">TAP!</p>`,'go'));tone(880,.15,'square',.06)},1600+Math.random()*3200);
+  A.onTap=p=>{if(!A.go){finish(1-p,`${name(p)} tapped too early`);return}finish(p,`${Math.round(performance.now()-A.t0)} ms reaction`)};
+}
+function hockeyGame(){
+  const cv=$('#hockey');cv.hidden=false;$('#arena').classList.add('hockey');
+  [0,1].forEach(p=>setHalf(p,''));
+  const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const b=cv.getBoundingClientRect(),W=b.width,H=b.height;cv.width=W*dpr;cv.height=H*dpr;
+  const R=Math.min(W,H)*.085,r=R*.55,GW=W*.44,GOALS=2,TOPPAD=12;
+  const pads=[{x:W/2,y:H*.9},{x:W/2,y:H*.1}];pads.forEach(P=>{P.px=P.x;P.py=P.y;P.vx=P.vy=0});
+  const puck={x:W/2,y:H/2,vx:0,vy:0},goals=[0,0],own={};let pause=0,flash=-1,last=performance.now();
+  const clampPad=p=>{const P=pads[p];P.x=clamp(P.x,R,W-R);P.y=p===0?clamp(P.y,H/2+R,H-R-TOPPAD):clamp(P.y,R+TOPPAD,H/2-R)};
+  const pos=e=>{const q=cv.getBoundingClientRect();return{x:e.clientX-q.left,y:e.clientY-q.top}};
+  const down=e=>{e.preventDefault();const q=pos(e),p=q.y>H/2?0:1;if(Object.values(own).includes(p))return;own[e.pointerId]=p;try{cv.setPointerCapture(e.pointerId)}catch(_){}pads[p].x=q.x;pads[p].y=q.y;clampPad(p)};
+  const move=e=>{const p=own[e.pointerId];if(p===undefined)return;e.preventDefault();const q=pos(e);pads[p].x=q.x;pads[p].y=q.y;clampPad(p)};
+  const up=e=>{delete own[e.pointerId]};
+  cv.addEventListener('pointerdown',down);cv.addEventListener('pointermove',move);cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  A.cleanup=()=>{cv.removeEventListener('pointerdown',down);cv.removeEventListener('pointermove',move);cv.removeEventListener('pointerup',up);cv.removeEventListener('pointercancel',up)};
+  const serve=to=>{puck.x=W/2;puck.y=to===0?H*.6:H*.4;puck.vx=(Math.random()-.5)*1.2;puck.vy=0};
+  serve(Math.random()<.5?0:1);pause=900;flash=-2;
+  const COL=['#FF6B57','#4C9DFF'];
+  function render(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle='#202020';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#3C3C3C';ctx.lineWidth=2;ctx.strokeRect(4,4,W-8,H-8);
+    ctx.setLineDash([8,10]);ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(W/2,H/2,W*.16,0,TAU);ctx.stroke();
+    [[1,0],[0,H-8]].forEach(([p,y])=>{ctx.fillStyle=COL[p];ctx.fillRect(W/2-GW/2,y,GW,8)});
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    [0,1].forEach(p=>{ctx.save();ctx.translate(W/2,p?H*.25:H*.75);if(p)ctx.rotate(Math.PI);
+      ctx.fillStyle='rgba(242,242,242,.07)';ctx.font=`800 ${Math.round(H*.16)}px "Bricolage Grotesque", sans-serif`;ctx.fillText(goals[p],0,0);
+      ctx.fillStyle='rgba(242,242,242,.45)';ctx.font='700 13px Figtree, sans-serif';ctx.fillText(`${name(p).toUpperCase()} · BEST OF 3`,0,-H*.15);
+      if(flash===p||flash===1-p){ctx.fillStyle=flash===p?'#FFB43F':'rgba(242,242,242,.8)';ctx.font=`800 ${Math.round(W*.12)}px "Bricolage Grotesque", sans-serif`;ctx.fillText(flash===p?'GOAL!':'Ouch',0,-H*.04)}
+      if(flash===-2){ctx.fillStyle='rgba(242,242,242,.8)';ctx.font=`800 ${Math.round(W*.08)}px "Bricolage Grotesque", sans-serif`;ctx.fillText('Drag your paddle',0,-H*.04)}
+      ctx.restore()});
+    pads.forEach((P,p)=>{ctx.beginPath();ctx.arc(P.x,P.y,R,0,TAU);ctx.fillStyle=COL[p];ctx.fill();ctx.beginPath();ctx.arc(P.x,P.y,R*.5,0,TAU);ctx.fillStyle='rgba(20,20,20,.35)';ctx.fill();ctx.beginPath();ctx.arc(P.x,P.y,R*.28,0,TAU);ctx.fillStyle=COL[p];ctx.fill()});
+    ctx.beginPath();ctx.arc(puck.x,puck.y,r,0,TAU);ctx.fillStyle='#F4F2EC';ctx.fill();
+    ctx.beginPath();ctx.arc(puck.x,puck.y,r*.6,0,TAU);ctx.strokeStyle='#BDBDBD';ctx.lineWidth=2;ctx.stroke();
+  }
+  function frame(now){
+    const dt=Math.min(3,(now-last)/16.67);last=now;
+    pads.forEach(P=>{P.vx=(P.x-P.px)/dt;P.vy=(P.y-P.py)/dt;P.px=P.x;P.py=P.y});
+    let scored=-1;
+    if(pause>0){pause-=dt*16.67;if(pause<=0)flash=-1}
+    else{
+      const steps=5,k=dt/steps;
+      for(let s=0;s<steps&&scored<0;s++){
+        puck.x+=puck.vx*k;puck.y+=puck.vy*k;
+        if(puck.x<r){puck.x=r;puck.vx=Math.abs(puck.vx)*.9;tone(220,.02,'sine',.04)}
+        if(puck.x>W-r){puck.x=W-r;puck.vx=-Math.abs(puck.vx)*.9;tone(220,.02,'sine',.04)}
+        const mouth=Math.abs(puck.x-W/2)<GW/2-r*.3;
+        if(puck.y<r&&!mouth){puck.y=r;puck.vy=Math.abs(puck.vy)*.9}
+        if(puck.y>H-r&&!mouth){puck.y=H-r;puck.vy=-Math.abs(puck.vy)*.9}
+        if(puck.y<-r){scored=0;break}
+        if(puck.y>H+r){scored=1;break}
+        pads.forEach(P=>{const dx=puck.x-P.x,dy=puck.y-P.y,d=Math.hypot(dx,dy)||1,m=R+r;
+          if(d<m){const nx=dx/d,ny=dy/d;puck.x=P.x+nx*m;puck.y=P.y+ny*m;const rvx=puck.vx-P.vx,rvy=puck.vy-P.vy,dot=rvx*nx+rvy*ny;
+            if(dot<0){puck.vx-=1.9*dot*nx;puck.vy-=1.9*dot*ny;tone(340,.03,'sine',.06);buzz(6)}}});
+      }
+      const sp=Math.hypot(puck.vx,puck.vy),max=Math.min(W,H)*.07;if(sp>max){puck.vx*=max/sp;puck.vy*=max/sp}
+      const f=Math.pow(.995,dt);puck.vx*=f;puck.vy*=f;
+    }
+    if(scored>=0){
+      goals[scored]++;tone(784,.15,'triangle',.07);buzz(40);
+      if(goals[scored]>=GOALS){render();finish(scored,`${goals[scored]}–${goals[1-scored]} on goals`);return}
+      flash=scored;pause=1100;serve(1-scored);
+    }
+    render();A.raf=requestAnimationFrame(frame);
+  }
+  render();A.raf=requestAnimationFrame(frame);
+}
+$('#challengeBtn').onclick=()=>{A.court=null;openArena()};
+function gavel(){tone(150,.09,'square',.09);setTimeout(()=>tone(150,.09,'square',.09),160);buzz([30,60,30])}
+const dot=p=>`<i style="background:var(--p${p})"></i>`;
+function courtCase(it){return`<div class="court-pick"><div class="mini">${posterHTML(it)}</div><div style="min-width:0"><p class="eyebrow">On trial</p><b>${esc(it.title)}</b></div></div>`}
+function showCourtPick(){
+  const pn=$('#panel');pn.hidden=false;
+  pn.innerHTML=`<div class="card"><p class="objection">Objection!</p>${courtCase(A.court.item)}
+    <p>Who's challenging the spin?</p>
+    <div class="actions" style="margin:0">${[0,1].map(p=>`<button class="btn who-btn" data-obj="${p}">${dot(p)}${esc(name(p))}</button>`).join('')}</div>
+    <button class="textbtn" data-act="drop">Never mind, keep the pick</button></div>`;
+}
+function showStakes(){
+  const c=A.court,o=c.objector,d=1-o;gavel();
+  $('#panel').innerHTML=`<div class="card"><p class="objection sm">Court is in session</p>${courtCase(c.item)}
+    <p class="stakes"><b>${esc(name(o))}</b> wants a re-spin. <b>${esc(name(d))}</b> defends the pick.</p>
+    <p>The court picks a random game. Win it and you win the argument. One challenge per pick.</p>
+    <button class="btn primary" data-act="trial">Let the court pick the game</button>
+    <button class="textbtn" data-act="drop">Never mind, keep the pick</button></div>`;
+}
+function showVerdict(w){
+  const c=A.court,sus=w===c.objector;gavel();
+  $('#panel').innerHTML=`<div class="card" style="text-align:center"><p class="eyebrow">The verdict</p>
+    <div class="verdict ${sus?'sus':'over'}">${sus?'Sustained':'Overruled'}</div>
+    <p class="stakes">${sus?`<b>${esc(name(w))}</b> wins. <b>${esc(c.item.title)}</b> is off the table tonight.`:`<b>${esc(name(w))}</b> wins. <b>${esc(c.item.title)}</b> stands, and the pick is final.`}</p>
+    <div class="tally"><span>${dot(0)}${esc(name(0))} <b>${A.scores[0]}</b></span><span>${dot(1)}${esc(name(1))} <b>${A.scores[1]}</b></span></div>
+    <button class="btn primary" data-act="${sus?'v-spin':'v-keep'}">${sus?'Spin a new pick':'Back to the pick'}</button></div>`;
+}
+$('#rChallenge').onclick=()=>{if(!S.current)return;A.court={item:S.current,objector:null};openArena(false);gavel();showCourtPick()};
+
+/* ---------- Plex account ---------- */
+const PRODUCT='Reel Roulette', VERSION='1.0.0';
+const CAP=window.Capacitor, PLATFORM=(CAP&&CAP.getPlatform&&CAP.getPlatform())||'web', NATIVE=PLATFORM!=='web';
+const PLUG=n=>CAP&&CAP.Plugins&&CAP.Plugins[n];
+const CID=(()=>{let id=store.get('rr-cid',null);if(!id){id=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));store.set('rr-cid',id)}return id})();
+let ACC=store.get('rr-account',null);
+const saveAcc=()=>store.set('rr-account',ACC);
+let GUESTS=store.get('rr-guests',[]);
+const saveGuests=()=>store.set('rr-guests',GUESTS);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const withTimeout=(p,ms,msg)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error(msg||'Timed out')),ms))]);
+
+function plexHeaders(token){
+  const h={'Accept':'application/json','X-Plex-Product':PRODUCT,'X-Plex-Version':VERSION,'X-Plex-Client-Identifier':CID,
+    'X-Plex-Platform':NATIVE?(PLATFORM==='ios'?'iOS':'Android'):'Web','X-Plex-Device':NATIVE?'Phone':'Browser','X-Plex-Device-Name':PRODUCT};
+  if(token)h['X-Plex-Token']=token;return h;
+}
+function parseXml(txt){try{const d=new DOMParser().parseFromString(txt,'application/xml');return d.querySelector('parsererror')?{text:txt}:{xml:d}}catch(e){return{text:txt}}}
+async function px(url,{method='GET',token,timeout=15000}={}){
+  const headers=plexHeaders(token);let res;
+  try{res=await withTimeout(fetch(url,{method,headers}),timeout,'Plex took too long to answer')}
+  catch(e){
+    if(!S.relay)throw new Error(`Couldn't reach ${new URL(url).hostname}`);
+    res=await withTimeout(fetch('api/relay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,method,headers})}),timeout,'Plex took too long to answer');
+  }
+  if(res.status===401||res.status===403)throw Object.assign(new Error('Plex said no (sign-in expired or not allowed)'),{status:res.status});
+  if(!res.ok)throw Object.assign(new Error(`Plex replied ${res.status}`),{status:res.status});
+  const txt=await res.text();try{return JSON.parse(txt)}catch(e){return parseXml(txt)}
+}
+
+/* sign in with Plex */
+let authCancel=null;
+async function plexAuth(purpose){
+  let win=null;
+  if(!NATIVE){try{win=window.open('','plexauth','width=520,height=720')}catch(e){}}
+  let pin;
+  try{pin=await px('https://plex.tv/api/v2/pins?strong=true',{method:'POST'})}
+  catch(e){try{win&&win.close()}catch(_){}throw e}
+  const q=new URLSearchParams({clientID:CID,code:pin.code,'context[device][product]':PRODUCT});
+  if(!NATIVE&&!win){
+    q.set('forwardUrl',location.href.split('#')[0]);
+    try{sessionStorage.setItem('rr-pending',JSON.stringify({id:pin.id,purpose}))}catch(e){}
+    location.href='https://app.plex.tv/auth#?'+q.toString();return new Promise(()=>{});
+  }
+  const url='https://app.plex.tv/auth#?'+q.toString();
+  if(NATIVE&&PLUG('Browser'))await PLUG('Browser').open({url,presentationStyle:'popover'});
+  else if(win)win.location.href=url;
+  toast('Finish signing in on the Plex page…',{sticky:true,action:'Cancel',onAction:()=>authCancel&&authCancel()});
+  try{const t=await pollPin(pin.id);return t}
+  finally{hideToast();try{win&&win.close()}catch(_){}try{NATIVE&&PLUG('Browser')&&PLUG('Browser').close()}catch(_){}}
+}
+function pollPin(id,maxMs=10*60e3){
+  return new Promise((resolve,reject)=>{
+    let stop=false;authCancel=()=>{stop=true;reject(new Error('Sign-in cancelled'))};
+    const t0=Date.now();
+    (async()=>{while(!stop&&Date.now()-t0<maxMs){
+      await sleep(1500);if(stop)return;
+      try{const r=await px(`https://plex.tv/api/v2/pins/${id}`);if(r&&r.authToken){stop=true;authCancel=null;return resolve(r.authToken)}}catch(e){}
+    }if(!stop)reject(new Error('Sign-in timed out'))})();
+  });
+}
+
+/* account + server */
+async function fetchUser(token){
+  const u=await px('https://plex.tv/api/v2/user',{token});
+  return{title:u.friendlyName||u.title||u.username||'You',uuid:u.uuid,thumb:u.thumb||'',home:!!(u.home||u.homeSize>1)};
+}
+async function connectAccount(token){
+  const user=await fetchUser(token);
+  const r=await px('https://plex.tv/api/v2/resources?includeHttps=1&includeRelay=1',{token});
+  const list=(Array.isArray(r)?r:((r.MediaContainer&&r.MediaContainer.Device)||[])).filter(d=>String(d.provides||'').includes('server'));
+  if(!list.length)throw new Error("This Plex account can't see any servers yet.");
+  const servers=list.map(d=>({name:d.name,id:d.clientIdentifier,accessToken:d.accessToken||token,owned:!!d.owned,
+    connections:(d.connections||d.Connection||[]).map(c=>({uri:c.uri,local:!!c.local,relay:!!c.relay,protocol:c.protocol}))}))
+    .sort((a,b)=>(b.owned-a.owned));
+  const old=ACC||{};
+  ACC={token,user,servers,server:null,people:(old.people||[]).filter(p=>p.kind!=='owner')};
+  ACC.server=servers.find(s=>old.server&&s.id===old.server.id)||servers[0];
+  saveAcc();
+}
+async function findConnection(server){
+  const secure=location.protocol==='https:'&&!NATIVE;
+  const ok=c=>!(secure&&c.protocol==='http');
+  const groups=[server.connections.filter(c=>c.local&&!c.relay),server.connections.filter(c=>!c.local&&!c.relay),server.connections.filter(c=>c.relay)];
+  for(const g of groups){
+    const cands=g.filter(ok).sort((a,b)=>(a.protocol==='https'?0:1)-(b.protocol==='https'?0:1));
+    if(!cands.length)continue;
+    try{return await Promise.any(cands.map(c=>px(c.uri+'/identity',{token:server.accessToken,timeout:4500}).then(()=>c)))}catch(e){}
+  }
+  throw new Error(`Couldn't reach ${server.name}. Make sure it's on, and turn on Remote Access in Plex to use it away from home.`);
+}
+async function loadLibraryClient(){
+  const sv=ACC.server,get=p=>px(sv.uri+p,{token:sv.accessToken,timeout:30000});
+  const secs=((await get('/library/sections')).MediaContainer.Directory||[]).filter(s=>s.type==='movie'||s.type==='show');
+  const items=[],guid={},cols=[];
+  for(const s of secs){
+    $('#source').textContent=`Loading ${s.title}…`;
+    const md=(await get(`/library/sections/${s.key}/all`)).MediaContainer.Metadata||[];
+    try{((await get(`/library/sections/${s.key}/collections`)).MediaContainer.Metadata||[]).forEach(c=>cols.push({id:c.ratingKey,title:c.title,type:s.type==='movie'?'movie':'show',library:s.title,count:Number(c.childCount)||0}))}catch(e){}
+    const gmap=new Map();
+    try{
+      const gs=(await get(`/library/sections/${s.key}/genre`)).MediaContainer.Directory||[];const q=[...gs];
+      const worker=async()=>{while(q.length){const g=q.shift();const r=(await get(`/library/sections/${s.key}/all?genre=${encodeURIComponent(g.key)}`)).MediaContainer.Metadata||[];
+        r.forEach(m=>{if(!gmap.has(m.ratingKey))gmap.set(m.ratingKey,new Set());gmap.get(m.ratingKey).add(g.title)})}};
+      await Promise.all([worker(),worker(),worker(),worker()]);
+    }catch(e){}
+    const mv=s.type==='movie';
+    for(const m of md){
+      const gen=new Set((m.Genre||[]).map(g=>g.tag));(gmap.get(m.ratingKey)||[]).forEach(g=>gen.add(g));
+      if(m.guid)guid[m.guid]=m.ratingKey;
+      items.push({id:m.ratingKey,type:mv?'movie':'show',title:m.title,year:m.year||null,genres:[...gen],rating:m.audienceRating||m.rating||null,
+        contentRating:m.contentRating||'',minutes:mv&&m.duration?Math.round(m.duration/60000):null,seasons:mv?null:(m.childCount||null),summary:m.summary||'',
+        watched:mv?(m.viewCount||0)>0:(m.leafCount>0&&m.viewedLeafCount>=m.leafCount),
+        inProgress:mv?(m.viewOffset||0)>0:(m.viewedLeafCount>0&&m.viewedLeafCount<m.leafCount),thumb:m.thumb||null,guid:m.guid||'',slug:m.slug||''});
+    }
+  }
+  S.items=items;S.guid=guid;S.collections=cols.filter(c=>c.count!==0).sort((a,b)=>a.library.localeCompare(b.library)||a.title.localeCompare(b.title));S.colIds={};
+}
+async function watchlistGuids(token){
+  for(const host of['https://discover.provider.plex.tv','https://metadata.provider.plex.tv']){
+    try{const out=new Set();let start=0,total=Infinity;
+      while(start<total){const r=await px(`${host}/library/sections/watchlist/all?includeCollections=1&includeExternalMedia=1&X-Plex-Container-Start=${start}&X-Plex-Container-Size=100`,{token});
+        const mc=r.MediaContainer||{},md=mc.Metadata||[];md.forEach(m=>m.guid&&out.add(m.guid));total=Number(mc.totalSize??mc.size??0);start+=100;if(!md.length)break}
+      return out}catch(e){}
+  }
+  return null;
+}
+
+/* people */
+async function loadHomeMembers(){
+  if(!ACC.user.home)return[];
+  let list=[];
+  try{const r=await px('https://plex.tv/api/v2/home/users',{token:ACC.token});list=Array.isArray(r)?r:(r.users||[])}
+  catch(e){try{const r=await px('https://plex.tv/api/home/users',{token:ACC.token});
+    if(r.xml)list=[...r.xml.querySelectorAll('User')].map(u=>({id:u.getAttribute('id'),uuid:u.getAttribute('uuid'),title:u.getAttribute('title'),protected:u.getAttribute('protected')==='1'}));
+    else list=(r.MediaContainer&&r.MediaContainer.User)||[]}catch(_){}}
+  return list.filter(u=>u.uuid&&u.uuid!==ACC.user.uuid).map(u=>({id:'h:'+u.uuid,name:u.title||u.username||u.friendlyName||'Home member',kind:'home',uuid:u.uuid,homeId:u.id,protected:!!(u.protected||u.hasPassword),thumb:u.thumb||''}));
+}
+async function switchHome(p,pin){
+  const qs=pin?`?pin=${encodeURIComponent(pin)}`:'';
+  try{const r=await px(`https://plex.tv/api/v2/home/users/${p.uuid}/switch${qs}`,{method:'POST',token:ACC.token});const t=r.authToken||r.authenticationToken;if(t)return t}
+  catch(e){if(e.status===401||e.status===403)throw new Error("That PIN didn't work.")}
+  const r=await px(`https://plex.tv/api/home/users/${p.homeId}/switch${qs}`,{method:'POST',token:ACC.token});
+  const t=r.xml?(r.xml.documentElement.getAttribute('authenticationToken')||r.xml.documentElement.getAttribute('authToken')):(r.authToken||r.authenticationToken);
+  if(!t)throw new Error(`Couldn't switch to ${p.name}.`);return t;
+}
+function setPeople(base){
+  S.people=[...base,...GUESTS.map(g=>({id:g.id,name:g.name,kind:'guest'}))];
+  if(!S.people.some(p=>p.id===prefs.profile))prefs.profile=S.people[0]&&S.people[0].id;
+}
+function accountPeople(){return[{id:'me',name:ACC.user.title,kind:'owner',token:ACC.token,thumb:ACC.user.thumb||''},...ACC.people]}
+async function ensureWatchlist(p){
+  if(S.mode!=='account'||!p||p.kind==='guest'||S.wl[p.id] instanceof Set)return;
+  if(p.kind==='home'&&!p.token){
+    let pin=null;if(p.protected){pin=await askPin(p.name);if(pin===null)return}
+    try{p.token=await switchHome(p,pin);const ap=ACC.people.find(x=>x.id===p.id);if(ap)ap.token=p.token;saveAcc()}
+    catch(e){toast(e.message);S.wl[p.id]='fail';return}
+  }
+  S.wl[p.id]='loading';renderControls();
+  const g=await watchlistGuids(p.token);
+  S.wl[p.id]=g?new Set([...g].map(x=>S.guid[x]).filter(Boolean)):'fail';
+}
+async function addPlexPerson(){
+  try{const token=await plexAuth('person');await finishAddPerson(token)}catch(e){if(!/cancel/i.test(e.message))toast(e.message)}
+}
+async function finishAddPerson(token){
+  const u=await fetchUser(token);
+  if(u.uuid===ACC.user.uuid){toast("That's you. You're already on the list.");return}
+  const id='p:'+u.uuid;ACC.people=ACC.people.filter(p=>p.id!==id);ACC.people.push({id,name:u.title,kind:'plex',token,uuid:u.uuid,thumb:u.thumb||''});saveAcc();
+  setPeople(accountPeople());prefs.profile=id;save();await ensureWatchlist(S.people.find(p=>p.id===id));
+  renderControls();renderSettings();rebuild();toast(`${u.title} added.`);
+}
+
+/* modes */
+async function startAccount(){
+  S.mode='account';S.live=true;S.wl={};S.veto.clear();
+  $('#source').textContent='Connecting to Plex…';$('#notice').hidden=true;
+  if(!ACC.servers||!ACC.server)await connectAccount(ACC.token);
+  let c;try{c=await findConnection(ACC.server)}catch(e){await connectAccount(ACC.token);c=await findConnection(ACC.server)}
+  ACC.server.uri=c.uri;ACC.server.via=c.relay?'Relay':c.local?'Local':'Remote';saveAcc();
+  S.machineId=ACC.server.id;
+  await loadLibraryClient();
+  try{const home=await loadHomeMembers();const keep=new Map(ACC.people.map(p=>[p.id,p]));
+    ACC.people=[...home.map(h=>Object.assign(h,keep.has(h.id)?{token:keep.get(h.id).token}:{})),...ACC.people.filter(p=>p.kind==='plex')];saveAcc()}catch(e){}
+  setPeople(accountPeople());
+  if(prefs.collection&&!curCollection())prefs.collection='';ensureCollection(curCollection()).then(()=>rebuild());
+  $('#source').textContent=`${ACC.server.name} · ${S.items.length} titles`;
+  renderControls();rebuild();renderAcctBtn();
+  await ensureWatchlist(S.people.find(p=>p.id===prefs.profile));renderControls();if(prefs.watchlist)rebuild();
+}
+function startSample(){
+  S.mode='sample';S.live=false;S.items=sampleItems();S.guid={};S.wl={};
+  const wl=(bit)=>new Set(S.items.filter(i=>i._f&bit).map(i=>i.id));
+  S.wl={'s:alex':wl(2),'s:sam':wl(4)};
+  const byT=(...ts)=>new Set(S.items.filter(i=>ts.includes(i.title)).map(i=>i.id));
+  S.collections=[
+    {id:'c:anim',title:'Animated Favorites',type:'movie',library:'Movies',count:3},
+    {id:'c:date',title:'Date Night',type:'movie',library:'Movies',count:5},
+    {id:'c:nolan',title:'Mind Benders',type:'movie',library:'Movies',count:4},
+    {id:'c:comfort',title:'Comfort TV',type:'show',library:'TV Shows',count:5}];
+  S.colIds={'c:anim':byT('Spider-Man: Into the Spider-Verse','Coco','Paddington 2'),'c:date':byT('La La Land','Crazy Rich Asians','The Notebook','Barbie','The Grand Budapest Hotel'),
+    'c:nolan':byT('Inception','Interstellar','Arrival','Everything Everywhere All at Once'),'c:comfort':byT('The Office','Abbott Elementary','Schitt\'s Creek','Ted Lasso','Only Murders in the Building')};
+  setPeople([{id:'s:alex',name:'Alex',kind:'sample'},{id:'s:sam',name:'Sam',kind:'sample'}]);
+  $('#source').textContent='Sample library';
+  const n=$('#notice');n.hidden=false;n.className='notice';
+  n.innerHTML=`<span>This is a sample library. Sign in to spin your own movies and shows.</span><button class="btn primary sm" id="noticeSignIn">Sign in with Plex</button>`;
+  $('#noticeSignIn').onclick=signIn;
+}
+function startNas(cfg,j){
+  S.mode='nas';S.live=true;S.machineId=cfg.machineId;S.items=j.items;S.guid={};S.wl={};
+  (j.profiles||[]).forEach(p=>{S.wl['n:'+p.name]=p.available?new Set(p.ids||[]):'fail'});
+  S.collections=(j.collections||[]).map(c=>({id:c.id,title:c.title,type:c.type,library:c.library,count:(c.ids||[]).length}));S.colIds={};(j.collections||[]).forEach(c=>{S.colIds[c.id]=new Set(c.ids||[])});
+  setPeople((j.profiles||[]).map(p=>({id:'n:'+p.name,name:p.name,kind:'nas'})));
+  $('#source').textContent=`${cfg.serverName||'Plex'} · ${S.items.length} titles`;
+}
+async function signIn(){
+  try{const token=await plexAuth('owner');await afterOwnerToken(token)}
+  catch(e){if(!/cancel/i.test(e.message))showError(e.message)}
+}
+async function afterOwnerToken(token){
+  toast('Signed in. Loading your library…',{sticky:true});
+  try{await connectAccount(token);await startAccount();hideToast();closeSettings()}
+  catch(e){hideToast();showError(e.message)}
+}
+function signOut(){
+  try{localStorage.removeItem('rr-account')}catch(e){}ACC=null;closeSettings();
+  location.reload();
+}
+function showError(msg){const n=$('#notice');n.hidden=false;n.className='notice err';n.innerHTML=`<span>${esc(msg)}</span><button class="btn sm" id="retryBtn">Try again</button>`;$('#retryBtn').onclick=()=>location.reload()}
+
+/* toast + PIN prompt */
+let toastT=0;
+function toast(msg,{sticky=false,action,onAction}={}){
+  const t=$('#toast');clearTimeout(toastT);
+  t.innerHTML=`<span>${esc(msg)}</span>${action?`<button class="textbtn" id="toastAct">${esc(action)}</button>`:''}`;t.hidden=false;
+  if(action)$('#toastAct').onclick=()=>{hideToast();onAction&&onAction()};
+  if(!sticky)toastT=setTimeout(hideToast,3800);
+}
+function hideToast(){$('#toast').hidden=true}
+function askPin(who){
+  return new Promise(resolve=>{
+    const m=$('#pinModal');m.hidden=false;$('#pinWho').textContent=`Enter ${who}'s Plex Home PIN`;const inp=$('#pinInput');inp.value='';setTimeout(()=>inp.focus(),50);
+    const done=v=>{m.hidden=true;$('#pinForm').onsubmit=null;$('#pinCancel').onclick=null;resolve(v)};
+    $('#pinForm').onsubmit=e=>{e.preventDefault();const v=inp.value.trim();if(/^\d{4}$/.test(v))done(v);else inp.focus()};
+    $('#pinCancel').onclick=()=>done(null);
+  });
+}
+
+/* settings sheet */
+const KIND={owner:'You',home:'Plex Home',plex:'Plex account',guest:'Guest',sample:'Sample profile',nas:'From NAS settings'};
+function avatar(p,i,cls=''){return`<span class="av ${cls}" style="background:${PAL[[0,3,2,4,1,5][i%6]]}">${esc((p.name||'?').slice(0,1).toUpperCase())}${p.thumb?`<img src="${esc(p.thumb)}" alt="" referrerpolicy="no-referrer" loading="lazy">`:''}</span>`}
+document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.parentElement&&t.parentElement.classList.contains('av'))t.remove()},true);
+function renderSettings(){
+  const b=$('#setBody');let acct='';
+  if(S.mode==='account'){
+    acct=`<div class="acct">${avatar({name:ACC.user.title,thumb:ACC.user.thumb},0)}<div style="min-width:0"><b>${esc(ACC.user.title)}</b><small>${esc(ACC.server.name)} · ${esc(ACC.server.via||'')}</small></div></div>
+      ${ACC.servers.length>1?`<label class="field">Server<select id="srvSel">${ACC.servers.map(s=>`<option value="${esc(s.id)}" ${s.id===ACC.server.id?'selected':''}>${esc(s.name)}${s.owned?'':' (shared)'}</option>`).join('')}</select></label>`:''}
+      <div class="actions"><button class="btn" id="refreshBtn">Refresh library</button><button class="btn" id="signOutBtn">Sign out</button></div>`;
+  }else{
+    acct=`<p class="help">${S.mode==='nas'?'Connected through your NAS settings. Sign in to use your Plex account directly on this device instead.':'Sign in to load your movies, shows, posters and watchlists. Your sign-in stays on this device.'}</p>
+      <button class="btn primary" id="setSignIn">Sign in with Plex</button>`;
+  }
+  const people=S.people.map((p,i)=>`<li>${avatar(p,i)}<div style="min-width:0"><b>${esc(p.name)}</b><small>${KIND[p.kind]||''}${p.kind==='home'&&p.protected?' · PIN':''}</small></div>
+    ${p.kind==='plex'||p.kind==='guest'?`<button class="textbtn" data-rm="${esc(p.id)}">Remove</button>`:''}</li>`).join('');
+  b.innerHTML=`<h2 class="set-h">Your Plex</h2>${acct}
+    <h2 class="set-h">People</h2>
+    <p class="help">Pick who's spinning on the main screen. ${S.mode==='account'?'Plex Home members show up on their own.':''}</p>
+    <ul class="people">${people}</ul>
+    ${S.mode==='account'?`<button class="btn" id="addPlexBtn">Add someone's Plex account</button>`:''}
+    <form class="addg" id="guestForm"><input id="guestName" maxlength="14" placeholder="Guest name" autocomplete="off" aria-label="Guest name"><button class="btn" type="submit">Add guest</button></form>
+    <h2 class="set-h">App</h2>
+    <label class="switch"><input type="checkbox" id="soundSw" ${prefs.sound?'checked':''}> Sound effects</label>
+    <p class="fine">Reel Roulette ${VERSION}. Not affiliated with or endorsed by Plex, Inc.</p>`;
+  const on=(id,ev,fn)=>{const el=$('#'+id);if(el)el[ev]=fn};
+  on('setSignIn','onclick',signIn);
+  on('signOutBtn','onclick',signOut);
+  on('refreshBtn','onclick',async()=>{closeSettings();try{await startAccount();toast('Library refreshed.')}catch(e){showError(e.message)}});
+  on('srvSel','onchange',async e=>{ACC.server=ACC.servers.find(s=>s.id===e.target.value);saveAcc();closeSettings();try{await startAccount()}catch(err){showError(err.message)}});
+  on('addPlexBtn','onclick',addPlexPerson);
+  on('soundSw','onchange',e=>{prefs.sound=e.target.checked;save();audio()});
+  $('#guestForm').onsubmit=e=>{e.preventDefault();const n=$('#guestName').value.trim();if(!n)return;
+    const g={id:'g:'+Date.now().toString(36),name:n};GUESTS.push(g);saveGuests();S.people.push({id:g.id,name:n,kind:'guest'});renderSettings();renderControls()};
+  b.querySelectorAll('[data-rm]').forEach(x=>x.onclick=()=>{const id=x.dataset.rm;
+    GUESTS=GUESTS.filter(g=>g.id!==id);saveGuests();if(ACC){ACC.people=ACC.people.filter(p=>p.id!==id);saveAcc()}
+    S.people=S.people.filter(p=>p.id!==id);if(prefs.profile===id)prefs.profile=S.people[0]&&S.people[0].id;save();renderSettings();renderControls();rebuild()});
+}
+function openSettings(){closeSheet();renderSettings();$('#scrim').hidden=false;$('#settings').hidden=false;$('#settings').scrollTop=0}
+function closeSettings(){$('#settings').hidden=true;if($('#sheet').hidden)$('#scrim').hidden=true}
+function renderAcctBtn(){const b=$('#acctBtn');
+  b.innerHTML=S.mode==='account'?avatar({name:ACC.user.title,thumb:ACC.user.thumb},0,'sm'):'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="7" r="3.5"/><path d="M3.5 17a6.5 6.5 0 0 1 13 0" stroke-linecap="round"/></svg>';
+  b.setAttribute('aria-label',S.mode==='account'?`Account: ${ACC.user.title}`:'Sign in and people')}
+$('#acctBtn').onclick=openSettings;
+$('#setX').onclick=closeSettings;
+
+/* in-app links */
+document.addEventListener('click',e=>{const a=e.target.closest('a[target="_blank"]');if(!a||!NATIVE||!PLUG('Browser'))return;e.preventDefault();PLUG('Browser').open({url:a.href})});
+/* Android back button */
+if(NATIVE&&PLUG('App'))PLUG('App').addListener('backButton',()=>{
+  if(!$('#pinModal').hidden)return $('#pinCancel').click();
+  if(FM)return closeFloat();
+  if(!$('#cpick').hidden)return closeColPick();
+  if(!$('#pMenu').hidden)return togglePMenu(false);
+  if(!$('#arena').hidden){if(!$('#panel').hidden&&!A.court)return closeArena();return $('#exitBtn').click()}
+  if(!$('#settings').hidden)return closeSettings();
+  if(!$('#sheet').hidden)return closeSheet();
+  PLUG('App').minimizeApp&&PLUG('App').minimizeApp();
+});
+
+/* ---------- boot ---------- */
+async function boot(){
+  renderAcctBtn();
+  let cfg=null;
+  if(!NATIVE){try{const r=await fetch('api/config',{cache:'no-store'});if(r.ok){cfg=await r.json();S.relay=!!cfg.relay}}catch(e){}}
+  let pending=null;try{pending=JSON.parse(sessionStorage.getItem('rr-pending')||'null');sessionStorage.removeItem('rr-pending')}catch(e){}
+  startSample();renderControls();rebuild();
+  try{await document.fonts.ready}catch(e){}draw();
+  if(pending){toast('Finishing Plex sign-in…',{sticky:true});
+    try{const t=await pollPin(pending.id,60e3);hideToast();if(pending.purpose==='person'&&ACC){await startAccount();await finishAddPerson(t)}else await afterOwnerToken(t);return}
+    catch(e){hideToast();showError(e.message)}}
+  if(ACC&&ACC.token){try{await startAccount();return}catch(e){showError(`Couldn't load your Plex library: ${e.message}`);return}}
+  if(cfg&&cfg.live){try{const r=await fetch('api/library',{cache:'no-store'});const j=await r.json();if(!r.ok)throw new Error(j.error||('Server replied '+r.status));
+      $('#notice').hidden=true;startNas(cfg,j);renderControls();rebuild()}
+    catch(e){showError(`Couldn't load your Plex library (${e.message}). Check PLEX_URL and PLEX_TOKEN in your Docker settings, or sign in with Plex instead.`)}}
+}
+boot();
 })();
 </script>
-</body>
-</html>
+</body></html>
